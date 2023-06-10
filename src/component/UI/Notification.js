@@ -12,11 +12,11 @@ const Notification = (props) => {
     return () => clearTimeout(timer);
   }, []);
   return (
-    <Alert className="rounded-0 border-0" variant={props.variant}>
+    <Alert className="rounded-0 border-0 p-2" variant={props.variant}>
       {props.variant === "danger" ? (
-        <i className="bi bi-exclamation-octagon-fill pe-3 fs-4"></i>
+        <i className="bi bi-exclamation-octagon-fill pe-3 fs-5"></i>
       ) : (
-        <i className=" fs-4 pe-3 bi bi-check-circle-fill"></i>
+        <i className=" fs-5 pe-3 bi bi-check-circle-fill"></i>
       )}
       {props.message}
     </Alert>

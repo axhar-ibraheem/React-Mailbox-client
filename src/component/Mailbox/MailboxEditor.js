@@ -7,6 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 import Notification from "../UI/Notification";
 import { showNotification } from "../../store/authSlice";
 import axios from "axios";
+
 const MailboxEditor = () => {
   const toRef = useRef();
   const subjectRef = useRef();
@@ -54,7 +55,7 @@ const MailboxEditor = () => {
     }
   };
   return (
-    <Container>
+    <>
       {message && <Notification message={message} />}
       <Form onSubmit={onSubmitHandler} className="p-3">
         <InputGroup className="mb-3">
@@ -68,7 +69,7 @@ const MailboxEditor = () => {
           />
         </InputGroup>
         <InputGroup className="mb-3">
-          <InputGroup.Text id="basic-addon1">Subject</InputGroup.Text>
+          <InputGroup.Text id="basic-addon2">Subject</InputGroup.Text>
           <Form.Control
             placeholder=""
             aria-label="subject"
@@ -77,7 +78,7 @@ const MailboxEditor = () => {
             required
           />
         </InputGroup>
-        <Form.Group className="mb-3" controlId="exampleForm.ControlTextarea1">
+        <Form.Group className="mb-3" controlId="textEditor">
           <Editor
             toolbarClassName="py-3 border-bottom bg-light"
             wrapperClassName="card mt-3"
@@ -98,7 +99,7 @@ const MailboxEditor = () => {
           </Button>
         </div>
       </Form>
-    </Container>
+    </>
   );
 };
 

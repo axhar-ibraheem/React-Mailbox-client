@@ -71,7 +71,7 @@ const SignUp = () => {
       if (response.status === 200) {
         if (signIn) {
           dispatch(login({ idToken: data.idToken, email: data.email }));
-          history.replace("/welcome");
+          history.replace("/welcome/inbox");
         } else {
           const message = "Welcome, you can now login with your credentials";
           dispatch(showNotification({ message: message, variant: "success" }));

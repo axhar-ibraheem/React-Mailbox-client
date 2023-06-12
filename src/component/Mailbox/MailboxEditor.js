@@ -32,6 +32,8 @@ const MailboxEditor = () => {
       subject: subject,
       emailContent: editorContent,
       sender: mailSender,
+      isChecked: false,
+      hasRead: false,
     };
     try {
       const response = await axios.post(
@@ -92,7 +94,7 @@ const MailboxEditor = () => {
         <div>
           <Button
             type="submit"
-            variant="info "
+            variant="secondary "
             className="bg-gradient shadow rounded-0 px-4"
           >
             {isLoading ? "Sending" : "Send"}

@@ -13,11 +13,14 @@ import Inbox from "../component/Mailbox/Inbox";
 import Message from "../component/Mailbox/Message";
 import Logout from "../component/userAuth/Logout";
 import { useSelector } from "react-redux";
+import Trash from "../component/Trash/Trash";
 const Welcome = () => {
   const [show, setShow] = useState(false);
   const mails = useSelector((state) => state.mail.mails);
   const email = useSelector((state) => state.auth.email);
-  const filteredMails = mails.filter((mail) => mail.recipient === email);
+  const filteredMails = mails.filter(
+    (mail) => mail.recipient === email && mail.trashed === false
+  );
   let unread = 0;
   filteredMails.forEach((mail) => {
     if (!mail.hasRead) {
@@ -62,9 +65,9 @@ const Welcome = () => {
                           <i className="fs-4 pe-2 bi bi-envelope-fill"></i>{" "}
                           Inbox
                         </span>
-                        <span className="ps-2 mx-auto">
+                        <span className="pt-2 pe-2 position-relative mx-auto">
                           unread
-                          <span className="ps-1 text-warning">
+                          <span className="ps-1 position-absolute top-0 end-0 text-warning">
                             {unread}
                           </span>{" "}
                         </span>
@@ -138,9 +141,8 @@ const Welcome = () => {
                 style={{ cursor: "pointer" }}
                 className="bi bi-justify fs-2"
               ></i>
-              <i className="bi fs-4 text-danger ps-3 bi-envelope-at">
-                Mail Box Client
-              </i>
+              <i className="bi fs-2 text-danger ps-3 bi-envelope-at-fill"></i>{" "}
+              <span>Mail Box Client</span>
             </span>
           </div>
           <Route path="/welcome/mailboxeditor">
@@ -149,9 +151,14 @@ const Welcome = () => {
           <Route path="/welcome/inbox" exact>
             <Inbox />
           </Route>
-          <Route path="/welcome/trash"></Route>
+          <Route path="/welcome/trash" exact>
+            <Trash />
+          </Route>
           <Route path="/welcome/sent"></Route>
           <Route path="/welcome/inbox/:messageId">
+            <Message />
+          </Route>
+          <Route path="/welcome/trash/:messageId">
             <Message />
           </Route>
         </Col>

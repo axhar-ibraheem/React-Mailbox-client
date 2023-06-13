@@ -1,25 +1,39 @@
-import { ListGroup, Row, Col, Form } from "react-bootstrap";
-import { Link } from "react-router-dom";
+import { ListGroup, Row, Col, Form, Button } from "react-bootstrap";
+import { Link, useLocation } from "react-router-dom";
 import { setChecked } from "../../store/mailSlice";
 import { useDispatch } from "react-redux";
 import { setRead } from "../../store/mailSlice";
 import axios from "axios";
+import { useState } from "react";
+import { toggleStarred } from "../../store/mailSlice";
 const MailListItems = (props) => {
   const { mail } = props;
+  const location = useLocation();
+
   const dispatch = useDispatch();
 
-  const onCheckHandler = (e) => {
-    e.stopPropagation();
-    dispatch(setChecked({ id: mail.id, mail: "single" }));
+  const onCheckHandler = () => {
+    dispatch(setChecked({ id: mail.id, selector: "single" }));
   };
-  const onClickHandler = async () => {
-    dispatch(setChecked({ id: null, mail: "none" }));
+  const [isHovered, setIsHovered] = useState(false);
+
+  const handleMouseEnter = () => {
+    setIsHovered(true);
+  };
+
+  const handleMouseLeave = () => {
+    setIsHovered(false);
+  };
+  const starClickHandler = async (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+    dispatch(toggleStarred({ id: mail.id }));
     try {
       const response = await axios.put(
         `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`,
         {
           ...mail,
-          hasRead: true,
+          starred: !mail.starred,
           isChecked: false,
         },
         {
@@ -29,24 +43,56 @@ const MailListItems = (props) => {
         }
       );
       const data = response.data;
+
       if (response.status === 200) {
-        dispatch(setRead({ id: mail.id }));
-        console.log(data);
       }
     } catch (error) {
       console.log(error.message);
     }
   };
 
+  const onClickHandler = async () => {
+    dispatch(setChecked({ id: null, selector: "none" }));
+    if (!mail.hasRead) {
+      try {
+        const response = await axios.put(
+          `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`,
+          {
+            ...mail,
+            hasRead: true,
+            isChecked: false,
+          },
+          {
+            headers: {
+              "Content-Type": "application/json",
+            },
+          }
+        );
+        const data = response.data;
+
+        if (response.status === 200) {
+          dispatch(setRead({ id: mail.id }));
+        }
+      } catch (error) {
+        console.log(error.message);
+      }
+    }
+  };
+
   return (
     <ListGroup.Item
-      action
       as={Link}
-      to={`/welcome/inbox/${mail.id}`}
-      className={`border-bottom ${
+      to={
+        location.pathname === "/welcome/inbox"
+          ? `/welcome/inbox/${mail.id}`
+          : `/welcome/trash/${mail.id}`
+      }
+      className={`mb-1 border-bottom ${
         mail.isChecked ? "bg-success bg-opacity-25" : ""
-      }`}
+      } ${isHovered ? "shadow-sm" : ""}`}
       onClick={onClickHandler}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
     >
       <Row>
         <Col lg="3">
@@ -58,9 +104,19 @@ const MailListItems = (props) => {
                 onClick={(e) => e.stopPropagation()}
               />
             </Form>
-            <span>
-              <i className="bi bi-star ps-3"></i>
-            </span>
+            <div className="" style={{ cursor: "auto" }}>
+              {mail.starred ? (
+                <i
+                  className="bi bi-star-fill text-warning px-1 ms-2 bg-secondary rounded bg-opacity-10  "
+                  onClick={starClickHandler}
+                />
+              ) : (
+                <i
+                  className="bi bi-star px-1 ms-2 bg-secondary rounded bg-opacity-10  "
+                  onClick={starClickHandler}
+                />
+              )}
+            </div>
 
             <p className="fw-bold ps-3">
               <i

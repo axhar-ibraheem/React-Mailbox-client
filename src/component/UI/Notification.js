@@ -8,7 +8,7 @@ const Notification = (props) => {
   useEffect(() => {
     const timer = setTimeout(() => {
       dispatch(showNotification({ message: null, variant: null }));
-    }, 5000);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, []);

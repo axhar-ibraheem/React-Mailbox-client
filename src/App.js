@@ -2,37 +2,52 @@ import { useEffect } from "react";
 import SignUp from "./component/userAuth/SignUp";
 import Welcome from "./Pages/Welcome";
 import { useSelector, useDispatch } from "react-redux";
-import { Route, Switch, Redirect } from "react-router-dom/cjs/react-router-dom";
-import mailSlice, { addToInbox } from "./store/mailSlice";
+import { Route, Switch, Redirect } from "react-router-dom";
 import axios from "axios";
 import { setMailsLoading } from "./store/mailSlice";
-import { clearMails } from "./store/mailSlice";
-
+import { addToInbox, clearInbox } from "./store/mailSlice";
+import { addToSentBox, clearSentBox } from "./store/sentMailsSlice";
 function App() {
   const auth = useSelector((state) => state.auth.isAuthenticated);
-  const email = useSelector((state) => state.auth.email);
+  const recipientMail = useSelector((state) => state.auth.email);
+  const email = recipientMail.replace(/[.]/g, "");
+
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(setMailsLoading(true));
 
     const getEmails = async () => {
       try {
-        const response = await axios.get(
-          "https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails.json",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-        const data = response.data;
-        if (response.status === 200) {
-          for (const key in data) {
+        const url1 =
+          "https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails.json";
+        const url2 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${email}.json`;
+
+        const requests = [axios.get(url1), axios.get(url2)];
+
+        const responses = await Promise.all(requests);
+        const [response1, response2] = responses;
+        const { data: receivedMails, status: status1 } = response1;
+        const { data: sentMails, status: status2 } = response2;
+
+        if (status1 === 200 && status2 === 200) {
+          for (const key in receivedMails) {
             const mailItem = {
               id: key,
-              ...data[key],
+              isChecked: false,
+              ...receivedMails[key],
             };
-            dispatch(addToInbox(mailItem));
+            if (mailItem.recipient === recipientMail) {
+              dispatch(addToInbox(mailItem));
+            }
+          }
+          for (const key in sentMails) {
+            const sentMailItem = {
+              id: key,
+              isChecked: false,
+              ...sentMails[key],
+            };
+
+            dispatch(addToSentBox(sentMailItem));
           }
         }
       } catch (e) {
@@ -46,7 +61,8 @@ function App() {
     }
 
     return () => {
-      dispatch(clearMails());
+      dispatch(clearInbox());
+      dispatch(clearSentBox());
     };
   }, [email]);
 

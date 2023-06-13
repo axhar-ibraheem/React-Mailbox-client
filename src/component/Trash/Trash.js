@@ -1,26 +1,20 @@
 import { Button, ListGroup } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import MailListItems from "../Mailbox/MailListItems";
-import { useHistory, useLocation } from "react-router-dom";
 import Selector from "../Mailbox/Selector";
 import { setChecked } from "../../store/mailSlice";
 import { useEffect } from "react";
 import axios from "axios";
 import { showNotification } from "../../store/authSlice";
 import { moveMails } from "../../store/mailSlice";
-import Notification from "../UI/Notification";
+
 import LoadingSpinner from "../UI/LoadingSpinner";
 const Trash = () => {
-  const email = useSelector((state) => state.auth.email);
   const mails = useSelector((state) => state.mail.mails);
+
   const dispatch = useDispatch();
-
   const isLoading = useSelector((state) => state.mail.isLoading);
-  const { message, variant } = useSelector((state) => state.auth.notification);
-
-  const filteredMails = mails.filter(
-    (mail) => mail.recipient === email && mail.trashed === true
-  );
+  const filteredMails = mails.filter((mail) => mail.trashed === true);
 
   const isDeleteEnabled = filteredMails.some((item) => item.isChecked);
 
@@ -73,18 +67,15 @@ const Trash = () => {
 
   return (
     <>
-      {message && (
-        <div
-          style={{ maxWidth: "20rem" }}
-          className="fixed-top ms-auto mt-2 me-3"
-        >
-          <Notification message={message} variant={variant} />
-        </div>
-      )}
       <div className="border-bottom d-flex align-items-center py-2 px-1">
         <Selector filteredMails={filteredMails} />
         <div className="ms-auto mx-lg-auto">
-          <Button size="sm" variant="secondary" className="border-0 me-3">
+          <Button
+            disabled={filteredMails.length === 0}
+            size="sm"
+            variant="secondary"
+            className="border-0 me-3"
+          >
             Empty Trash Now
           </Button>
           <Button

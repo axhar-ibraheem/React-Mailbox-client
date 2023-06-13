@@ -17,15 +17,12 @@ import Notification from "../UI/Notification";
 import { showNotification } from "../../store/authSlice";
 import Selector from "./Selector";
 const Inbox = () => {
-  const email = useSelector((state) => state.auth.email);
   const mails = useSelector((state) => state.mail.mails);
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.mail.isLoading);
   const { message, variant } = useSelector((state) => state.auth.notification);
 
-  let filteredMails = mails.filter(
-    (mail) => mail.recipient === email && mail.trashed === false
-  );
+  let filteredMails = mails.filter((mail) => mail.trashed === false);
 
   const isDeleteEnabled = filteredMails.some((item) => item.isChecked);
 

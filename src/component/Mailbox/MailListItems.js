@@ -9,14 +9,19 @@ import { toggleStarred } from "../../store/mailSlice";
 const MailListItems = (props) => {
   const { mail } = props;
   const location = useLocation();
-
   const dispatch = useDispatch();
 
   const onCheckHandler = () => {
     dispatch(setChecked({ id: mail.id, selector: "single" }));
   };
   const [isHovered, setIsHovered] = useState(false);
-
+  const [starHovered, setStarHovered] = useState(false);
+  const starMouseEnter = () => {
+    setStarHovered(true);
+  };
+  const starMouseLeave = () => {
+    setStarHovered(false);
+  };
   const handleMouseEnter = () => {
     setIsHovered(true);
   };
@@ -24,9 +29,11 @@ const MailListItems = (props) => {
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
+
   const starClickHandler = async (e) => {
     e.stopPropagation();
     e.preventDefault();
+
     dispatch(toggleStarred({ id: mail.id }));
     try {
       const response = await axios.put(
@@ -53,6 +60,7 @@ const MailListItems = (props) => {
 
   const onClickHandler = async () => {
     dispatch(setChecked({ id: null, selector: "none" }));
+
     if (!mail.hasRead) {
       try {
         const response = await axios.put(
@@ -85,9 +93,13 @@ const MailListItems = (props) => {
       to={
         location.pathname === "/welcome/inbox"
           ? `/welcome/inbox/${mail.id}`
-          : `/welcome/trash/${mail.id}`
+          : location.pathname === "/welcome/trash"
+          ? `/welcome/trash/${mail.id}`
+          : location.pathname === "/welcome/sent"
+          ? `/welcome/sent/${mail.id}`
+          : `/welcome/starred/${mail.id}`
       }
-      className={`mb-1 border-bottom ${
+      className={`mb-1 py-2 border-bottom ${
         mail.isChecked ? "bg-success bg-opacity-25" : ""
       } ${isHovered ? "shadow-sm" : ""}`}
       onClick={onClickHandler}
@@ -104,21 +116,29 @@ const MailListItems = (props) => {
                 onClick={(e) => e.stopPropagation()}
               />
             </Form>
-            <div className="" style={{ cursor: "auto" }}>
+            <div className="">
               {mail.starred ? (
                 <i
-                  className="bi bi-star-fill text-warning px-1 ms-2 bg-secondary rounded bg-opacity-10  "
+                  className={`bi bi-star-fill text-warning px-1 ms-2 ${
+                    starHovered ? "bg-secondary rounded bg-opacity-10" : ""
+                  }`}
                   onClick={starClickHandler}
+                  onMouseEnter={starMouseEnter}
+                  onMouseLeave={starMouseLeave}
                 />
               ) : (
                 <i
-                  className="bi bi-star px-1 ms-2 bg-secondary rounded bg-opacity-10  "
+                  className={`bi bi-star  px-1 ms-2 ${
+                    starHovered ? "bg-secondary rounded bg-opacity-10" : ""
+                  }`}
                   onClick={starClickHandler}
+                  onMouseEnter={starMouseEnter}
+                  onMouseLeave={starMouseLeave}
                 />
               )}
             </div>
 
-            <p className="fw-bold ps-3">
+            <p className="fw-bold ps-3 m-0">
               <i
                 className={`bi ${
                   mail.hasRead ? "invisible" : ""
@@ -131,9 +151,10 @@ const MailListItems = (props) => {
         <Col lg="7">
           <div>
             <span className="fw-bold">{mail.subject}</span>
-            <span className="ps-2">
-              The time has come for us to sunset this Slack community and...
-            </span>
+            <span className="ps-2">{`${mail.emailContent.substring(
+              0,
+              70
+            )}...`}</span>
           </div>
         </Col>
         <Col></Col>

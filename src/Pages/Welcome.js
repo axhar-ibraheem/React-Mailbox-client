@@ -12,21 +12,26 @@ import { useState } from "react";
 import Inbox from "../component/Mailbox/Inbox";
 import Message from "../component/Mailbox/Message";
 import Logout from "../component/userAuth/Logout";
+import Sent from "../component/Sent/Sent";
 import { useSelector } from "react-redux";
 import Trash from "../component/Trash/Trash";
+import Notification from "../component/UI/Notification";
 const Welcome = () => {
   const [show, setShow] = useState(false);
   const mails = useSelector((state) => state.mail.mails);
   const email = useSelector((state) => state.auth.email);
+  const { message, variant } = useSelector((state) => state.auth.notification);
   const filteredMails = mails.filter(
     (mail) => mail.recipient === email && mail.trashed === false
   );
+
   let unread = 0;
   filteredMails.forEach((mail) => {
     if (!mail.hasRead) {
       unread++;
     }
   });
+
   const onClickHandler = () => {
     setShow(false);
   };
@@ -134,6 +139,14 @@ const Welcome = () => {
           </div>
         </Col>
         <Col>
+          {message && (
+            <div
+              style={{ maxWidth: "20rem" }}
+              className="fixed-top ms-auto mt-2 me-3"
+            >
+              <Notification message={message} variant={variant} />
+            </div>
+          )}
           <div className="d-lg-none border-bottom pb-2">
             <span className="px-3 py-2">
               <i
@@ -145,6 +158,7 @@ const Welcome = () => {
               <span>Mail Box Client</span>
             </span>
           </div>
+
           <Route path="/welcome/mailboxeditor">
             <MailboxEditor />
           </Route>
@@ -154,7 +168,12 @@ const Welcome = () => {
           <Route path="/welcome/trash" exact>
             <Trash />
           </Route>
-          <Route path="/welcome/sent"></Route>
+          <Route path="/welcome/sent" exact>
+            <Sent />
+          </Route>
+          <Route path="/welcome/sent/:messageId">
+            <Message />
+          </Route>
           <Route path="/welcome/inbox/:messageId">
             <Message />
           </Route>

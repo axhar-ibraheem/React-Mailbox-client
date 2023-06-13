@@ -2,21 +2,23 @@ import { useParams, useHistory, useLocation } from "react-router-dom";
 import { useSelector, useDispatch } from "react-redux";
 import { Container, Button } from "react-bootstrap";
 import LoadingSpinner from "../UI/LoadingSpinner";
-import { moveToTrash } from "../../store/mailSlice";
+import { moveToTrash, deleteForever } from "../../store/mailSlice";
 import { showNotification } from "../../store/authSlice";
-import Notification from "../UI/Notification";
 import axios from "axios";
-import { deleteForever } from "../../store/mailSlice";
 const Message = () => {
   const { messageId } = useParams();
 
   const location = useLocation();
   const mails = useSelector((state) => state.mail.mails);
+  const sentMails = useSelector((state) => state.sentMails.sentMails);
   const history = useHistory();
-  const mailItem = mails.filter((mail) => mail.id === messageId);
-  const [mail] = mailItem;
-  const { message, variant } = useSelector((state) => state.auth.notification);
 
+  const mailItem =
+    location.pathname === `/welcome/sent/${messageId}`
+      ? sentMails.filter((mail) => mail.id === messageId)
+      : mails.filter((mail) => mail.id === messageId);
+
+  const [mail] = mailItem;
   const moveToTrashHandler = async () => {
     try {
       const response = await axios.put(
@@ -44,6 +46,7 @@ const Message = () => {
   };
 
   const deleteForeverHandler = async () => {
+    dispatch(deleteForever({ id: messageId }));
     history.replace("/welcome/trash");
     try {
       const response = await axios.delete(
@@ -58,9 +61,8 @@ const Message = () => {
             variant: "success",
           })
         );
-
-        dispatch(deleteForever({ id: messageId }));
       }
+      console.log(data);
     } catch (error) {
       console.log(error.message);
     }
@@ -68,9 +70,13 @@ const Message = () => {
 
   const onBackHandler = () => {
     history.replace(
-      location.pathname === `/welcome/inbox/${messageId}`
+      location.pathname === `/welcome/inbox/${mail.id}`
         ? "/welcome/inbox"
-        : "/welcome/trash"
+        : location.pathname === `/welcome/trash/${mail.id}`
+        ? "/welcome/trash"
+        : location.pathname === `/welcome/sent/${mail.id}`
+        ? "/welcome/sent"
+        : "/welcome/starred"
     );
   };
   const dispatch = useDispatch();
@@ -85,14 +91,6 @@ const Message = () => {
   }
   return (
     <Container>
-      {message && (
-        <div
-          style={{ maxWidth: "20rem" }}
-          className="fixed-top ms-auto mt-2 me-3"
-        >
-          <Notification message={message} variant={variant} />
-        </div>
-      )}
       <div className="border-bottom py-2 d-flex align-items-center">
         <p
           className="m-0"
@@ -135,14 +133,7 @@ const Message = () => {
         <span className="fw-bold">To:</span>
         <span>me {`(${mail.recipient})`} </span>
       </div>
-      <div className="mt-5 bg-light h-100 mx-lg-auto">
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos eius
-        mollitia, adipisci velit suscipit fugiat laborum, ipsam reprehenderit
-        omnis veniam accusamus officiis repellat aperiam? Iste repellat qui
-        adipisci harum commodi sint ut similique voluptatibus corporis sed
-        veritatis nobis distinctio vel alias iure, tempora maxime ratione
-        exercitationem. Iure quos explicabo eligendi.
-      </div>
+      <div className="mt-5 bg-light h-100 mx-lg-auto">{mail.emailContent}</div>
     </Container>
   );
 };

@@ -1,20 +1,19 @@
 import { Editor } from "react-draft-wysiwyg";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
-import { Container, Form, Button, InputGroup } from "react-bootstrap";
+import { Form, Button, InputGroup } from "react-bootstrap";
 import { useRef, useState } from "react";
 import { EditorState, convertToRaw } from "draft-js";
 import { useSelector, useDispatch } from "react-redux";
-import Notification from "../UI/Notification";
+
 import { showNotification } from "../../store/authSlice";
 import axios from "axios";
-import { addToSentBox } from "../../store/mailSlice";
+import { addToSentBox } from "../../store/sentMailsSlice";
 
 const MailboxEditor = () => {
   const toRef = useRef();
   const subjectRef = useRef();
   const mailSender = useSelector((state) => state.auth.email);
   const email = mailSender.replace(/[.]/g, "");
-  const { message, variant } = useSelector((state) => state.auth.notification);
   const [editorState, setEditorState] = useState(EditorState.createEmpty());
   const [isLoading, setIsLoading] = useState(false);
   const dispatch = useDispatch();
@@ -27,19 +26,18 @@ const MailboxEditor = () => {
     e.preventDefault();
     const to = toRef.current.value;
     const mailSubject = subjectRef.current.value;
-    const editorContent = convertToRaw(editorState.getCurrentContent());
+    const editorContent = editorState.getCurrentContent().getPlainText();
 
     const emailInfo = {
       recipient: to,
       subject: mailSubject,
       emailContent: editorContent,
       sender: mailSender,
-      isChecked: false,
       hasRead: false,
       trashed: false,
       starred: false,
     };
-    const { recipient, subject, emailContent, sender } = emailInfo;
+
     try {
       const url1 =
         "https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails.json";
@@ -47,31 +45,23 @@ const MailboxEditor = () => {
 
       const requests = [
         axios.post(url1, emailInfo),
-        axios.post(url2, {
-          recipient,
-          subject,
-          emailContent,
-          sender,
-        }),
+        axios.post(url2, emailInfo),
       ];
 
       const responses = await Promise.all(requests);
       const [response1, response2] = responses;
       const { status: status1 } = response1;
-      const { status: status2 } = response2;
+      const { data, status: status2 } = response2;
 
       if (status1 === 200 && status2 === 200) {
         dispatch(showNotification({ message: "Sent", variant: "success" }));
-        dispatch();
+        const mailItem = {
+          id: data.name,
+          isChecked: false,
+          ...emailInfo,
+        };
+        dispatch(addToSentBox(mailItem));
       }
-      //   dispatch(showNotification({ message: "Sent", variant: "success" }));
-      //   dispatch();
-
-      //   const data = response.data;
-      //   if (response.status === 200) {
-      //     console.log(data);
-      //     dispatch(showNotification({ message: "Sent", variant: "success" }));
-      //   }
     } catch (error) {
       console.log(error.message);
     } finally {
@@ -80,14 +70,6 @@ const MailboxEditor = () => {
   };
   return (
     <>
-      {message && (
-        <div
-          style={{ maxWidth: "20rem" }}
-          className="fixed-top ms-auto mt-2 me-3"
-        >
-          <Notification message={message} variant={variant} />
-        </div>
-      )}
       <Form onSubmit={onSubmitHandler} className="p-3">
         <InputGroup className="mb-3">
           <InputGroup.Text id="basic-addon1">To</InputGroup.Text>

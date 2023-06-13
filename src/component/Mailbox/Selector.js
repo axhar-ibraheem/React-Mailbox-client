@@ -5,7 +5,7 @@ import { useEffect } from "react";
 const Selector = (props) => {
   const dispatch = useDispatch();
   const checked = props.filteredMails.some((mail) => mail.isChecked === false);
-  console.log(props.filteredMails);
+
   const selectAllHandler = () => {
     dispatch(setChecked({ id: null, selector: "allMark" }));
   };

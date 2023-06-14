@@ -4,41 +4,43 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 import MailListItems from "../Mailbox/MailListItems";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { moveFromSentbox, setChecked } from "../../store/mailSlice";
+import {
+  moveFromSentbox,
+  moveFromInbox,
+  setChecked,
+} from "../../store/mailSlice";
 import { useEffect } from "react";
 import { showNotification } from "../../store/authSlice";
-
 import axios from "axios";
-const Sent = () => {
+const Starred = () => {
   const mails = useSelector((state) => state.mail.mails);
   const email = useSelector((state) => state.auth.email);
-  const senderMail = email.replace(/[.]/g, "");
-
-  const sentMails = mails.filter(
-    (mail) => mail.trashed === false && mail.sender === email
-  );
   const isLoading = useSelector((state) => state.mail.isLoading);
   const dispatch = useDispatch();
-  const isDeleteEnabled = sentMails.some((mail) => mail.isChecked);
+  const senderMail = email.replace(/[.]/g, "");
 
+  const starredMails = mails.filter(
+    (mail) => mail.starred && mail.trashed === false
+  );
+
+  const isDeleteEnabled = starredMails.some((mail) => mail.isChecked);
   const content = (
     <div className="text-center mt-5">
       {" "}
-      <h5>No sent messages!</h5>
-      <Link to="/welcome/mailboxeditor">
-        <span>Send</span>
-      </Link>{" "}
-      one now!
+      <h5>No Starred messages!</h5>
     </div>
   );
-
+  const url1 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails`;
+  const url2 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}`;
   const onDeleteHandler = async () => {
     try {
-      const updatedPromises = sentMails
+      const updatedPromises = starredMails
         .filter((mail) => mail.isChecked)
         .map((mail) =>
           axios.put(
-            `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}/${mail.id}.json`,
+            mail.sender === email
+              ? `${url2}/${mail.id}.json`
+              : `${url1}/${mail.id}.json`,
             {
               ...mail,
               isChecked: false,
@@ -54,9 +56,14 @@ const Sent = () => {
       const responses = await Promise.all(updatedPromises);
 
       dispatch(
-        showNotification({ message: "Moved to trash!", variant: "success" })
+        showNotification({
+          message: "Moved to Trash!",
+          variant: "success",
+        })
       );
+      dispatch(moveFromInbox("toTrash"));
       dispatch(moveFromSentbox("toTrash"));
+      console.log(responses);
     } catch (error) {
       console.log(error.message);
     }
@@ -67,11 +74,10 @@ const Sent = () => {
       dispatch(setChecked({ id: null, selector: "none" }));
     };
   }, []);
-
   return (
     <>
       <div className="border-bottom d-flex align-items-center py-2 px-1">
-        <Selector filteredMails={sentMails} />
+        <Selector filteredMails={starredMails} />
         <div className="ms-auto mx-lg-auto">
           <Button
             disabled={!isDeleteEnabled}
@@ -90,11 +96,11 @@ const Sent = () => {
         <div className=" d-flex h-50 justify-content-center align-items-center">
           <LoadingSpinner />
         </div>
-      ) : sentMails.length === 0 ? (
+      ) : starredMails.length === 0 ? (
         content
       ) : (
         <ListGroup variant="flush" className="">
-          {sentMails.map((mail) => (
+          {starredMails.map((mail) => (
             <MailListItems mail={mail} key={mail.id} />
           ))}
         </ListGroup>
@@ -103,4 +109,4 @@ const Sent = () => {
   );
 };
 
-export default Sent;
+export default Starred;

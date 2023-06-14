@@ -16,6 +16,7 @@ import Sent from "../component/Sent/Sent";
 import { useSelector } from "react-redux";
 import Trash from "../component/Trash/Trash";
 import Notification from "../component/UI/Notification";
+import Starred from "../component/Starred/Starred";
 const Welcome = () => {
   const [show, setShow] = useState(false);
   const mails = useSelector((state) => state.mail.mails);
@@ -116,7 +117,7 @@ const Welcome = () => {
                       <i className="fs-4 pe-2 bi bi-trash3"></i> Trash
                     </ToggleButton>
                   </NavLink>
-                  <NavLink to="/welcome/stared" activeClassName={"bg-success"}>
+                  <NavLink to="/welcome/starred" activeClassName={"bg-success"}>
                     <ToggleButton
                       id="toggle-check"
                       type="checkbox"
@@ -170,6 +171,12 @@ const Welcome = () => {
           </Route>
           <Route path="/welcome/sent" exact>
             <Sent />
+          </Route>
+          <Route path="/welcome/starred" exact>
+            <Starred />
+          </Route>
+          <Route path="/welcome/starred/:messageId">
+            <Message />
           </Route>
           <Route path="/welcome/sent/:messageId">
             <Message />

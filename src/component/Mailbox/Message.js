@@ -10,19 +10,21 @@ const Message = () => {
 
   const location = useLocation();
   const mails = useSelector((state) => state.mail.mails);
-  const sentMails = useSelector((state) => state.sentMails.sentMails);
+  const mailItem = mails.filter((mail) => mail.id === messageId);
   const history = useHistory();
-
-  const mailItem =
-    location.pathname === `/welcome/sent/${messageId}`
-      ? sentMails.filter((mail) => mail.id === messageId)
-      : mails.filter((mail) => mail.id === messageId);
+  const email = useSelector((state) => state.auth.email);
+  const senderMail = email.replace(/[.]/g, "");
 
   const [mail] = mailItem;
+  const url =
+    mail.sender === email
+      ? `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}/${mail.id}.json`
+      : `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`;
+
   const moveToTrashHandler = async () => {
     try {
       const response = await axios.put(
-        `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${messageId}.json`,
+        url,
         {
           ...mail,
           trashed: true,
@@ -38,7 +40,15 @@ const Message = () => {
         dispatch(
           showNotification({ message: "Moved to trash!", variant: "success" })
         );
-        history.replace("/welcome/inbox");
+        history.replace(
+          location.pathname === `/welcome/inbox/${mail.id}`
+            ? "/welcome/inbox"
+            : location.pathname === `/welcome/trash/${mail.id}`
+            ? "/welcome/trash"
+            : location.pathname === `/welcome/sent/${mail.id}`
+            ? "/welcome/sent"
+            : "/welcome/starred"
+        );
       }
     } catch (error) {
       console.log(error.message);
@@ -49,9 +59,7 @@ const Message = () => {
     dispatch(deleteForever({ id: messageId }));
     history.replace("/welcome/trash");
     try {
-      const response = await axios.delete(
-        `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${messageId}.json`
-      );
+      const response = await axios.delete(url);
 
       const data = response.data;
       if (response.status === 200) {
@@ -90,8 +98,8 @@ const Message = () => {
     );
   }
   return (
-    <Container>
-      <div className="border-bottom py-2 d-flex align-items-center">
+    <>
+      <div className="border-bottom py-2 px-2 d-flex align-items-center">
         <p
           className="m-0"
           onClick={onBackHandler}
@@ -101,7 +109,7 @@ const Message = () => {
           <span>Back</span>
         </p>
 
-        {location.pathname === `/welcome/inbox/${messageId}` ? (
+        {location.pathname !== `/welcome/trash/${messageId}` ? (
           <Button
             variant="secondary"
             className="px-2 mb-1 border-0 ms-auto mx-lg-auto"
@@ -115,7 +123,7 @@ const Message = () => {
         ) : (
           <Button
             variant="secondary"
-            className="px-2 mb-1 border-0 ms-auto mx-lg-auto"
+            className="px-2 border-0 ms-auto mx-lg-auto"
             onClick={deleteForeverHandler}
           >
             <p className="mx-auto p-0 m-0">
@@ -125,16 +133,21 @@ const Message = () => {
           </Button>
         )}
       </div>
-      <div className="pt-3">
-        <span className="fw-bold">From:</span>
-        <span>{mail.sender}</span>
+      <div className="px-3">
+        <div className="pt-3">
+          <span className="fw-bold">From:</span>
+          <span>{mail.sender}</span>
+        </div>
+        <div className="pt-3">
+          <span className="fw-bold">To:</span>
+          <span>me {`(${mail.recipient})`} </span>
+        </div>
+        <p className="fw-bold pt-5">Subject: {mail.subject}</p>
+        <div className="mt-5 bg-light mx-lg-auto">
+          <p>{mail.emailContent} </p>
+        </div>
       </div>
-      <div className="pt-3">
-        <span className="fw-bold">To:</span>
-        <span>me {`(${mail.recipient})`} </span>
-      </div>
-      <div className="mt-5 bg-light h-100 mx-lg-auto">{mail.emailContent}</div>
-    </Container>
+    </>
   );
 };
 

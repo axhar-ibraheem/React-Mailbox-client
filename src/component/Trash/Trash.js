@@ -1,22 +1,37 @@
-import { Button, ListGroup } from "react-bootstrap";
+import { Button, ListGroup, Modal } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import MailListItems from "../Mailbox/MailListItems";
 import Selector from "../Mailbox/Selector";
-import { setChecked } from "../../store/mailSlice";
-import { useEffect } from "react";
+import ConfirmDelete from "./ConfirmDelete";
+import {
+  moveFromInbox,
+  moveFromSentbox,
+  setChecked,
+} from "../../store/mailSlice";
+import { useEffect, useState } from "react";
 import axios from "axios";
 import { showNotification } from "../../store/authSlice";
-import { moveMails } from "../../store/mailSlice";
-
 import LoadingSpinner from "../UI/LoadingSpinner";
+import { emptyTrash } from "../../store/mailSlice";
+
 const Trash = () => {
   const mails = useSelector((state) => state.mail.mails);
+  const email = useSelector((state) => state.auth.email);
 
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
+
+  const senderMail = email.replace(/[.]/g, "");
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.mail.isLoading);
+
   const filteredMails = mails.filter((mail) => mail.trashed === true);
 
   const isDeleteEnabled = filteredMails.some((item) => item.isChecked);
+
+  const url1 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails`;
+  const url2 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}`;
 
   const onRestoreHandler = async () => {
     try {
@@ -24,7 +39,9 @@ const Trash = () => {
         .filter((mail) => mail.isChecked)
         .map((mail) =>
           axios.put(
-            `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`,
+            mail.sender === email
+              ? `${url2}/${mail.id}.json`
+              : `${url1}/${mail.id}.json`,
             {
               ...mail,
               isChecked: false,
@@ -45,8 +62,32 @@ const Trash = () => {
           variant: "success",
         })
       );
-      dispatch(moveMails("toInbox"));
-      console.log(responses);
+      dispatch(moveFromInbox("toInbox"));
+      dispatch(moveFromSentbox("toInbox"));
+    } catch (error) {
+      console.log(error.message);
+    }
+  };
+
+  const emptyTrashHandler = async () => {
+    try {
+      const updatedPromises = filteredMails.map((mail) =>
+        axios.delete(
+          mail.sender === email
+            ? `${url2}/${mail.id}.json`
+            : `${url1}/${mail.id}.json`
+        )
+      );
+      const responses = await Promise.all(updatedPromises);
+
+      dispatch(emptyTrash());
+      setShow(false);
+      dispatch(
+        showNotification({
+          message: "Trash is cleared",
+          variant: "success",
+        })
+      );
     } catch (error) {
       console.log(error.message);
     }
@@ -55,7 +96,7 @@ const Trash = () => {
   const content = (
     <div className="text-center mt-5">
       {" "}
-      <h5>Trash is Empty</h5>
+      <h5>No conversations in Trash!</h5>
     </div>
   );
 
@@ -67,6 +108,14 @@ const Trash = () => {
 
   return (
     <>
+      {
+        <ConfirmDelete
+          handleClose={handleClose}
+          show={show}
+          emptyTrashHandler={emptyTrashHandler}
+        />
+      }
+
       <div className="border-bottom d-flex align-items-center py-2 px-1">
         <Selector filteredMails={filteredMails} />
         <div className="ms-auto mx-lg-auto">
@@ -75,6 +124,7 @@ const Trash = () => {
             size="sm"
             variant="secondary"
             className="border-0 me-3"
+            onClick={handleShow}
           >
             Empty Trash Now
           </Button>

@@ -89,7 +89,12 @@ const SignUp = () => {
     <>
       <Container fluid>
         <Row className="justify-content-center">
-          {message && <Notification message={message} variant={variant} />}
+          {message && (
+            <div className="fixed-top p-0">
+              {" "}
+              <Notification message={message} variant={variant} />{" "}
+            </div>
+          )}
           <Col className="mt-5">
             <div
               style={{ maxWidth: "25rem" }}

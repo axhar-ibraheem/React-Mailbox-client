@@ -7,7 +7,7 @@ import { useSelector, useDispatch } from "react-redux";
 
 import { showNotification } from "../../store/authSlice";
 import axios from "axios";
-import { addToSentBox } from "../../store/sentMailsSlice";
+import { addToInbox } from "../../store/mailSlice";
 
 const MailboxEditor = () => {
   const toRef = useRef();
@@ -60,7 +60,7 @@ const MailboxEditor = () => {
           isChecked: false,
           ...emailInfo,
         };
-        dispatch(addToSentBox(mailItem));
+        dispatch(addToInbox(mailItem));
       }
     } catch (error) {
       console.log(error.message);

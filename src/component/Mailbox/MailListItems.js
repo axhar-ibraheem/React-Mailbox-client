@@ -1,13 +1,15 @@
 import { ListGroup, Row, Col, Form, Button } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { setChecked } from "../../store/mailSlice";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setRead } from "../../store/mailSlice";
 import axios from "axios";
 import { useState } from "react";
 import { toggleStarred } from "../../store/mailSlice";
 const MailListItems = (props) => {
   const { mail } = props;
+  const email = useSelector((state) => state.auth.email);
+  const senderMail = email.replace(/[.]/g, "");
   const location = useLocation();
   const dispatch = useDispatch();
 
@@ -30,18 +32,23 @@ const MailListItems = (props) => {
     setIsHovered(false);
   };
 
+  const url =
+    mail.sender === email
+      ? `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}/${mail.id}.json`
+      : `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`;
+
   const starClickHandler = async (e) => {
     e.stopPropagation();
     e.preventDefault();
 
     dispatch(toggleStarred({ id: mail.id }));
+
     try {
       const response = await axios.put(
-        `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`,
+        url,
         {
           ...mail,
           starred: !mail.starred,
-          isChecked: false,
         },
         {
           headers: {
@@ -52,6 +59,7 @@ const MailListItems = (props) => {
       const data = response.data;
 
       if (response.status === 200) {
+        console.log(data);
       }
     } catch (error) {
       console.log(error.message);
@@ -64,11 +72,10 @@ const MailListItems = (props) => {
     if (!mail.hasRead) {
       try {
         const response = await axios.put(
-          `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`,
+          url,
           {
             ...mail,
             hasRead: true,
-            isChecked: false,
           },
           {
             headers: {
@@ -116,6 +123,7 @@ const MailListItems = (props) => {
                 onClick={(e) => e.stopPropagation()}
               />
             </Form>
+
             <div className="">
               {mail.starred ? (
                 <i

@@ -1,7 +1,7 @@
 import { setChecked } from "../../store/mailSlice";
 import { useDispatch } from "react-redux";
 import { SplitButton, Form, Dropdown } from "react-bootstrap";
-import { useEffect } from "react";
+
 const Selector = (props) => {
   const dispatch = useDispatch();
   const checked = props.filteredMails.some((mail) => mail.isChecked === false);

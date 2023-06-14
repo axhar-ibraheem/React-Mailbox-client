@@ -6,11 +6,14 @@ import { Route, Switch, Redirect } from "react-router-dom";
 import axios from "axios";
 import { setMailsLoading } from "./store/mailSlice";
 import { addToInbox, clearInbox } from "./store/mailSlice";
-import { addToSentBox, clearSentBox } from "./store/sentMailsSlice";
+
 function App() {
   const auth = useSelector((state) => state.auth.isAuthenticated);
   const recipientMail = useSelector((state) => state.auth.email);
-  const email = recipientMail.replace(/[.]/g, "");
+  let email;
+  if (auth) {
+    email = recipientMail.replace(/[.]/g, "");
+  }
 
   const dispatch = useDispatch();
   useEffect(() => {
@@ -47,7 +50,7 @@ function App() {
               ...sentMails[key],
             };
 
-            dispatch(addToSentBox(sentMailItem));
+            dispatch(addToInbox(sentMailItem));
           }
         }
       } catch (e) {
@@ -62,7 +65,6 @@ function App() {
 
     return () => {
       dispatch(clearInbox());
-      dispatch(clearSentBox());
     };
   }, [email]);
 

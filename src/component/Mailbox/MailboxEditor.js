@@ -2,7 +2,7 @@ import { Editor } from "react-draft-wysiwyg";
 import "../../../node_modules/react-draft-wysiwyg/dist/react-draft-wysiwyg.css";
 import { Form, Button, InputGroup } from "react-bootstrap";
 import { useRef, useState } from "react";
-import { EditorState, convertToRaw } from "draft-js";
+import { EditorState } from "draft-js";
 import { useSelector, useDispatch } from "react-redux";
 
 import { showNotification } from "../../store/authSlice";

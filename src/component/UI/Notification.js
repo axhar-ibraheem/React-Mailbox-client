@@ -11,7 +11,7 @@ const Notification = (props) => {
     }, 4000);
 
     return () => clearTimeout(timer);
-  }, []);
+  }, [dispatch]);
   return (
     <Alert className="rounded-0 border-0 px-3 p-2" variant={props.variant}>
       {props.variant === "danger" ? (

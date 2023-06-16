@@ -3,8 +3,7 @@ import { ListGroup, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import MailListItems from "./MailListItems";
-import { setChecked } from "../../store/mailSlice";
-import { moveFromInbox } from "../../store/mailSlice";
+import { moveFromInbox, setChecked } from "../../store/mailSlice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { showNotification } from "../../store/authSlice";
 import Selector from "./Selector";
@@ -18,12 +17,6 @@ const Inbox = () => {
   );
 
   const isDeleteEnabled = filteredMails.some((mail) => mail.isChecked);
-
-  useEffect(() => {
-    return () => {
-      dispatch(setChecked({ id: null, selector: "none" }));
-    };
-  }, []);
 
   const onDeleteHandler = async () => {
     try {
@@ -44,7 +37,8 @@ const Inbox = () => {
             }
           )
         );
-      const responses = await Promise.all(updatedPromises);
+
+      await Promise.all(updatedPromises);
 
       dispatch(
         showNotification({ message: "Moved to trash!", variant: "success" })
@@ -62,8 +56,14 @@ const Inbox = () => {
     </div>
   );
 
+  useEffect(() => {
+    return () => {
+      dispatch(setChecked({ id: null, selector: "none" }));
+    };
+  }, [dispatch]);
+
   return (
-    <>
+    <div className="">
       <div className="border-bottom d-flex align-items-center py-2 px-1">
         <Selector filteredMails={filteredMails} />
 
@@ -82,19 +82,23 @@ const Inbox = () => {
         </div>
       </div>
       {isLoading ? (
-        <div className=" d-flex h-50 justify-content-center align-items-center">
+        <div className="d-flex mt-5 pt-5 justify-content-center align-items-center">
           <LoadingSpinner />
         </div>
       ) : filteredMails.length === 0 ? (
         content
       ) : (
-        <ListGroup variant="flush" className="">
+        <ListGroup
+          style={{ maxHeight: "80vh" }}
+          variant="flush"
+          className="overflow-auto"
+        >
           {filteredMails.map((mail) => (
             <MailListItems mail={mail} key={mail.id} />
           ))}
         </ListGroup>
       )}
-    </>
+    </div>
   );
 };
 

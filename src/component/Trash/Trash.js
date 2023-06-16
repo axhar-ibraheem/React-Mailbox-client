@@ -1,4 +1,4 @@
-import { Button, ListGroup, Modal } from "react-bootstrap";
+import { Button, ListGroup } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import MailListItems from "../Mailbox/MailListItems";
 import Selector from "../Mailbox/Selector";
@@ -54,8 +54,8 @@ const Trash = () => {
             }
           )
         );
-      const responses = await Promise.all(updatedPromises);
 
+      await Promise.all(updatedPromises);
       dispatch(
         showNotification({
           message: "Restored! Moved to Inbox",
@@ -78,7 +78,7 @@ const Trash = () => {
             : `${url1}/${mail.id}.json`
         )
       );
-      const responses = await Promise.all(updatedPromises);
+      await Promise.all(updatedPromises);
 
       dispatch(emptyTrash());
       setShow(false);
@@ -104,7 +104,7 @@ const Trash = () => {
     return () => {
       dispatch(setChecked({ id: null, selector: "none" }));
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -146,7 +146,11 @@ const Trash = () => {
       ) : filteredMails.length === 0 ? (
         content
       ) : (
-        <ListGroup variant="flush" className="">
+        <ListGroup
+          variant="flush"
+          className="overflow-auto"
+          style={{ maxHeight: "80vh" }}
+        >
           {filteredMails.map((mail) => (
             <MailListItems mail={mail} key={mail.id} />
           ))}

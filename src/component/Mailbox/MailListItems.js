@@ -1,4 +1,4 @@
-import { ListGroup, Row, Col, Form, Button } from "react-bootstrap";
+import { ListGroup, Row, Col, Form } from "react-bootstrap";
 import { Link, useLocation } from "react-router-dom";
 import { setChecked } from "../../store/mailSlice";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,6 +16,7 @@ const MailListItems = (props) => {
   const onCheckHandler = () => {
     dispatch(setChecked({ id: mail.id, selector: "single" }));
   };
+
   const [isHovered, setIsHovered] = useState(false);
   const [starHovered, setStarHovered] = useState(false);
   const starMouseEnter = () => {
@@ -56,10 +57,8 @@ const MailListItems = (props) => {
           },
         }
       );
-      const data = response.data;
 
       if (response.status === 200) {
-        console.log(data);
       }
     } catch (error) {
       console.log(error.message);
@@ -83,7 +82,6 @@ const MailListItems = (props) => {
             },
           }
         );
-        const data = response.data;
 
         if (response.status === 200) {
           dispatch(setRead({ id: mail.id }));
@@ -156,7 +154,7 @@ const MailListItems = (props) => {
             </p>
           </div>{" "}
         </Col>
-        <Col lg="7">
+        <Col lg="8" className="pt-1 pt-lg-0">
           <div>
             <span className="fw-bold">{mail.subject}</span>
             <span className="ps-2">{`${mail.emailContent.substring(

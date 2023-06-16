@@ -51,7 +51,7 @@ const Sent = () => {
             }
           )
         );
-      const responses = await Promise.all(updatedPromises);
+      await Promise.all(updatedPromises);
 
       dispatch(
         showNotification({ message: "Moved to trash!", variant: "success" })
@@ -66,7 +66,7 @@ const Sent = () => {
     return () => {
       dispatch(setChecked({ id: null, selector: "none" }));
     };
-  }, []);
+  }, [dispatch]);
 
   return (
     <>
@@ -93,7 +93,11 @@ const Sent = () => {
       ) : sentMails.length === 0 ? (
         content
       ) : (
-        <ListGroup variant="flush" className="">
+        <ListGroup
+          style={{ maxHeight: "80vh" }}
+          variant="flush"
+          className="overflow-auto"
+        >
           {sentMails.map((mail) => (
             <MailListItems mail={mail} key={mail.id} />
           ))}

@@ -22,6 +22,7 @@ const Welcome = () => {
   const mails = useSelector((state) => state.mail.mails);
   const email = useSelector((state) => state.auth.email);
   const { message, variant } = useSelector((state) => state.auth.notification);
+
   const filteredMails = mails.filter(
     (mail) => mail.recipient === email && mail.trashed === false
   );
@@ -42,7 +43,7 @@ const Welcome = () => {
 
   return (
     <Container fluid>
-      <Row className="min-vh-100">
+      <Row className="vh-100 overflow-hidden">
         <Col className="bg-dark d-flex flex-column p-0 pb-4" xs="auto">
           <Offcanvas
             className="p-lg-3 pb-2 bg-dark"
@@ -51,7 +52,7 @@ const Welcome = () => {
             responsive="lg"
             style={{ maxWidth: "70vw" }}
           >
-            <Offcanvas.Body className="d-flex flex-column  p-lg-2">
+            <Offcanvas.Body className="d-flex flex-column p-lg-2">
               <div className="text-center">
                 <i className="bi bi-envelope-at-fill text-danger fs-2"></i>
                 <p className="ps-2 fs-4 fw-bold text-info">Mail Box Client</p>
@@ -66,14 +67,14 @@ const Welcome = () => {
                       className="rounded-0 w-100 text-start border-0 py-2 text-light"
                       onClick={onClickHandler}
                     >
-                      <div className="d-flex ">
+                      <div className="d-flex">
                         <span>
                           <i className="fs-4 pe-2 bi bi-envelope-fill"></i>{" "}
                           Inbox
                         </span>
-                        <span className="pt-2 pe-2 position-relative mx-auto">
+                        <span className="pt-3 position-relative mx-auto">
                           unread
-                          <span className="ps-1 position-absolute top-0 end-0 text-warning">
+                          <span className=" p-0 position-absolute top-0 end-0 text-warning">
                             {unread}
                           </span>{" "}
                         </span>
@@ -130,7 +131,7 @@ const Welcome = () => {
                   </NavLink>
                 </ButtonGroup>
               </div>
-              <div className="mt-auto d-lg-none ms-3">
+              <div className="mt-auto d-lg-none  ms-3">
                 <Logout />
               </div>
             </Offcanvas.Body>
@@ -142,7 +143,7 @@ const Welcome = () => {
         <Col>
           {message && (
             <div
-              style={{ maxWidth: "20rem" }}
+              style={{ maxWidth: "15rem" }}
               className="fixed-top ms-auto mt-2 me-3"
             >
               <Notification message={message} variant={variant} />

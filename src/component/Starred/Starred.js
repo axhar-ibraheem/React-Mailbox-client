@@ -3,7 +3,6 @@ import { Button, ListGroup } from "react-bootstrap";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import MailListItems from "../Mailbox/MailListItems";
 import { useDispatch, useSelector } from "react-redux";
-import { Link } from "react-router-dom";
 import {
   moveFromSentbox,
   moveFromInbox,
@@ -73,7 +72,7 @@ const Starred = () => {
     return () => {
       dispatch(setChecked({ id: null, selector: "none" }));
     };
-  }, []);
+  }, [dispatch]);
   return (
     <>
       <div className="border-bottom d-flex align-items-center py-2 px-1">
@@ -99,7 +98,11 @@ const Starred = () => {
       ) : starredMails.length === 0 ? (
         content
       ) : (
-        <ListGroup variant="flush" className="">
+        <ListGroup
+          style={{ maxHeight: "80vh" }}
+          variant="flush"
+          className="overflow-auto"
+        >
           {starredMails.map((mail) => (
             <MailListItems mail={mail} key={mail.id} />
           ))}

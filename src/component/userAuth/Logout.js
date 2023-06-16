@@ -1,6 +1,6 @@
 import { Button } from "react-bootstrap";
 import { logout } from "../../store/authSlice";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useHistory } from "react-router-dom";
 const Logout = () => {
   const dispatch = useDispatch();

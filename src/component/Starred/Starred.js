@@ -44,7 +44,8 @@ const Starred = () => {
             }
           )
         );
-      const responses = await Promise.all(updatedPromises);
+      await Promise.all(updatedPromises);
+
       dispatch(moveFromStarred("toTrash"));
       dispatch(
         showNotification({
@@ -52,8 +53,6 @@ const Starred = () => {
           variant: "success",
         })
       );
-
-      console.log(responses);
     } catch (error) {
       console.log(error.message);
     }
@@ -62,6 +61,7 @@ const Starred = () => {
   useEffect(() => {
     return () => {
       dispatch(setChecked({ id: null, selector: "none" }));
+      dispatch(showNotification({ message: null, variant: null }));
     };
   }, [dispatch]);
   return (

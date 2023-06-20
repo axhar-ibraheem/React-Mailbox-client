@@ -57,8 +57,8 @@ const Trash = () => {
           variant: "success",
         })
       );
-      dispatch(moveFromInbox("toInbox"));
-      dispatch(moveFromSentbox("toInbox"));
+      dispatch(moveFromInbox({ move: "toInbox", email: email }));
+      dispatch(moveFromSentbox({ move: "toSentbox", email: email }));
     } catch (error) {
       console.log(error.message);
     }
@@ -98,6 +98,7 @@ const Trash = () => {
   useEffect(() => {
     return () => {
       dispatch(setChecked({ id: null, selector: "none" }));
+      dispatch(showNotification({ message: null, variant: null }));
     };
   }, [dispatch]);
 

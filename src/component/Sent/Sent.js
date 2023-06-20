@@ -48,7 +48,7 @@ const Sent = () => {
         );
       await Promise.all(updatedPromises);
 
-      dispatch(moveFromSentbox("toTrash"));
+      dispatch(moveFromSentbox({ move: "toTrash", email: email }));
       dispatch(
         showNotification({ message: "Moved to trash!", variant: "success" })
       );
@@ -60,6 +60,7 @@ const Sent = () => {
   useEffect(() => {
     return () => {
       dispatch(setChecked({ id: null, selector: "none" }));
+      dispatch(showNotification({ message: null, variant: null }));
     };
   }, [dispatch]);
 

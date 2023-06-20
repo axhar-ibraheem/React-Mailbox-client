@@ -13,7 +13,6 @@ const Inbox = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.mail.isLoading);
   const email = useSelector((state) => state.auth.email);
-  const { fetchData: modifyMail } = useAxiosFetch();
   const filteredMails = mails.filter(
     (mail) => mail.trashed === false && mail.recipient === email
   );
@@ -21,25 +20,6 @@ const Inbox = () => {
   const isDeleteEnabled = filteredMails.some((mail) => mail.isChecked);
 
   const onDeleteHandler = async () => {
-    // const urls = filteredMails
-    //   .filter((mail) => mail.isChecked)
-    //   .map(
-    //     (mail) =>
-    //       `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`
-    //   );
-
-    filteredMails.forEach((mail) => {
-      if (mail.isChecked) {
-        modifyMail(
-          `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`,
-
-          "PUT",
-
-          { ...mail, isChecked: false, trashed: true }
-        );
-      }
-    });
-
     try {
       const updatedPromises = filteredMails
         .filter((mail) => mail.isChecked)
@@ -56,7 +36,7 @@ const Inbox = () => {
 
       await Promise.all(updatedPromises);
 
-      dispatch(moveFromInbox("toTrash"));
+      dispatch(moveFromInbox({ move: "toTrash", email: email }));
       dispatch(
         showNotification({ message: "Moved to trash!", variant: "success" })
       );
@@ -75,6 +55,7 @@ const Inbox = () => {
   useEffect(() => {
     return () => {
       dispatch(setChecked({ id: null, selector: "none" }));
+      dispatch(showNotification({ message: null, variant: null }));
     };
   }, [dispatch]);
 
@@ -82,7 +63,6 @@ const Inbox = () => {
     <div className="">
       <div className="border-bottom d-flex align-items-center py-2 px-1">
         <Selector filteredMails={filteredMails} />
-
         <div className="ms-auto mx-lg-auto">
           <Button
             variant="secondary"

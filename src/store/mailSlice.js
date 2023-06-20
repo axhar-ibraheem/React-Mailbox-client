@@ -3,7 +3,6 @@ import { createSlice } from "@reduxjs/toolkit";
 const initialMailBoxState = {
   mails: [],
   isLoading: false,
-  email: localStorage.getItem("email"),
 };
 
 const mailSlice = createSlice({
@@ -52,22 +51,24 @@ const mailSlice = createSlice({
       }
     },
     moveFromInbox: (state, action) => {
+      const { move, email } = action.payload;
       state.mails = state.mails.map((mail) => {
-        if (mail.isChecked && mail.recipient === state.email) {
+        if (mail.isChecked && mail.recipient === email) {
           return {
             ...mail,
-            trashed: action.payload === "toTrash",
+            trashed: move === "toTrash",
           };
         }
         return mail;
       });
     },
     moveFromSentbox: (state, action) => {
+      const { move, email } = action.payload;
       state.mails = state.mails.map((mail) => {
-        if (mail.isChecked && mail.sender === state.email) {
+        if (mail.isChecked && mail.sender === email) {
           return {
             ...mail,
-            trashed: action.payload === "toTrash",
+            trashed: move === "toTrash",
           };
         }
         return mail;

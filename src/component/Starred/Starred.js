@@ -3,11 +3,7 @@ import { Button, ListGroup } from "react-bootstrap";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import MailListItems from "../Mailbox/MailListItems";
 import { useDispatch, useSelector } from "react-redux";
-import {
-  moveFromSentbox,
-  moveFromInbox,
-  setChecked,
-} from "../../store/mailSlice";
+import { setChecked, moveFromStarred } from "../../store/mailSlice";
 import { useEffect } from "react";
 import { showNotification } from "../../store/authSlice";
 import axios from "axios";
@@ -31,6 +27,7 @@ const Starred = () => {
   );
   const url1 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails`;
   const url2 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}`;
+
   const onDeleteHandler = async () => {
     try {
       const updatedPromises = starredMails
@@ -44,24 +41,18 @@ const Starred = () => {
               ...mail,
               isChecked: false,
               trashed: true,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
             }
           )
         );
       const responses = await Promise.all(updatedPromises);
-
+      dispatch(moveFromStarred("toTrash"));
       dispatch(
         showNotification({
           message: "Moved to Trash!",
           variant: "success",
         })
       );
-      dispatch(moveFromInbox("toTrash"));
-      dispatch(moveFromSentbox("toTrash"));
+
       console.log(responses);
     } catch (error) {
       console.log(error.message);

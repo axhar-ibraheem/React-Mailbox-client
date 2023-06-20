@@ -7,11 +7,13 @@ import { moveFromInbox, setChecked } from "../../store/mailSlice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { showNotification } from "../../store/authSlice";
 import Selector from "./Selector";
+import useAxiosFetch from "../../hooks/useAxiosFetch.";
 const Inbox = () => {
   const mails = useSelector((state) => state.mail.mails);
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.mail.isLoading);
   const email = useSelector((state) => state.auth.email);
+  const { fetchData: modifyMail } = useAxiosFetch();
   const filteredMails = mails.filter(
     (mail) => mail.trashed === false && mail.recipient === email
   );
@@ -19,6 +21,25 @@ const Inbox = () => {
   const isDeleteEnabled = filteredMails.some((mail) => mail.isChecked);
 
   const onDeleteHandler = async () => {
+    // const urls = filteredMails
+    //   .filter((mail) => mail.isChecked)
+    //   .map(
+    //     (mail) =>
+    //       `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`
+    //   );
+
+    filteredMails.forEach((mail) => {
+      if (mail.isChecked) {
+        modifyMail(
+          `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`,
+
+          "PUT",
+
+          { ...mail, isChecked: false, trashed: true }
+        );
+      }
+    });
+
     try {
       const updatedPromises = filteredMails
         .filter((mail) => mail.isChecked)
@@ -29,21 +50,16 @@ const Inbox = () => {
               ...mail,
               isChecked: false,
               trashed: true,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
             }
           )
         );
 
       await Promise.all(updatedPromises);
 
+      dispatch(moveFromInbox("toTrash"));
       dispatch(
         showNotification({ message: "Moved to trash!", variant: "success" })
       );
-      dispatch(moveFromInbox("toTrash"));
     } catch (error) {
       console.log(error.message);
     }

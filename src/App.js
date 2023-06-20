@@ -3,114 +3,96 @@ import SignUp from "./component/userAuth/SignUp";
 import Welcome from "./Pages/Welcome";
 import { useSelector, useDispatch } from "react-redux";
 import { Route, Switch, Redirect } from "react-router-dom";
-import axios from "axios";
-import { setMailsLoading } from "./store/mailSlice";
 import { addToInbox, clearInbox } from "./store/mailSlice";
+import useAxiosFetch from "./hooks/useAxiosFetch.";
 
 function App() {
   const auth = useSelector((state) => state.auth.isAuthenticated);
   const recipientMail = useSelector((state) => state.auth.email);
 
+  const { fetchData: fetchMails } = useAxiosFetch();
+
   let email;
   if (auth) {
     email = recipientMail.replace(/[.]/g, "");
   }
+
   const mails = useSelector((state) => state.mail.mails);
   const dispatch = useDispatch();
-
   const url1 =
     "https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails.json";
   const url2 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${email}.json`;
 
+  const urls = [url1, url2];
+
   useEffect(() => {
-    dispatch(setMailsLoading(true));
-    const getEmails = async () => {
-      try {
-        const requests = [axios.get(url1), axios.get(url2)];
+    const onSuccess = (responses) => {
+      const receivedMails = responses[0]?.data;
+      const sentMails = responses[1]?.data;
 
-        const responses = await Promise.all(requests);
-
-        const [response1, response2] = responses;
-        const { data: receivedMails, status: status1 } = response1;
-        const { data: sentMails, status: status2 } = response2;
-
-        if (status1 === 200 && status2 === 200) {
-          for (const key in receivedMails) {
-            const mailItem = {
+      const inboxMails = receivedMails
+        ? Object.entries(receivedMails)
+            .filter(([key, mail]) => mail.recipient === recipientMail)
+            .map(([key, mail]) => ({
               id: key,
               isChecked: false,
-              ...receivedMails[key],
-            };
-            if (mailItem.recipient === recipientMail) {
-              dispatch(addToInbox(mailItem));
-            }
-          }
-          for (const key in sentMails) {
-            const sentMailItem = {
-              id: key,
-              isChecked: false,
-              ...sentMails[key],
-            };
+              ...mail,
+            }))
+        : [];
 
-            dispatch(addToInbox(sentMailItem));
-          }
-        }
-      } catch (e) {
-        console.log(e.message);
-      } finally {
-        dispatch(setMailsLoading(false));
-      }
+      const sentMailItems = sentMails
+        ? Object.entries(sentMails).map(([key, mail]) => ({
+            id: key,
+            isChecked: false,
+            ...mail,
+          }))
+        : [];
+
+      const allMails = [...sentMailItems, ...inboxMails];
+
+      dispatch(addToInbox(allMails));
     };
 
     if (recipientMail) {
-      getEmails();
+      fetchMails(urls, "GET", null, onSuccess);
     }
 
     return () => {
       dispatch(clearInbox());
     };
-  }, [recipientMail, dispatch]);
+  }, [recipientMail, dispatch, fetchMails]);
 
   useEffect(() => {
-    const getEmails = async () => {
-      try {
-        const response = await axios.get(url1);
-        const data = response.data;
-
-        const arr = [];
-        if (response.status === 200) {
-          for (const key in data) {
-            const mailItem = {
-              id: key,
-              isChecked: false,
-              ...data[key],
-            };
-            if (mailItem.recipient === recipientMail) {
-              arr.push(mailItem);
-            }
-          }
+    const onSuccess = (response) => {
+      const data = response.data;
+      const arr = [];
+      for (const key in data) {
+        const mailItem = {
+          id: key,
+          isChecked: false,
+          ...data[key],
+        };
+        if (mailItem.recipient === recipientMail) {
+          arr.push(mailItem);
         }
-        arr.forEach((mail) => {
-          if (!mails.some((email) => email.id === mail.id)) {
-            dispatch(addToInbox(mail));
-          }
-        });
-      } catch (e) {
-        console.log(e.message);
-      } finally {
       }
+      arr.forEach((mail) => {
+        if (!mails.some((email) => email.id === mail.id)) {
+          dispatch(addToInbox([mail]));
+        }
+      });
     };
 
     const interval = setInterval(() => {
       if (recipientMail) {
-        getEmails();
+        fetchMails(url1, "GET", null, onSuccess);
       }
     }, 2000);
 
     return () => {
       clearInterval(interval);
     };
-  }, [dispatch, recipientMail, mails]);
+  }, [fetchMails, recipientMail, mails]);
 
   return (
     <Switch>

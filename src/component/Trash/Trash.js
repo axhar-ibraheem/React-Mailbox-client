@@ -46,11 +46,6 @@ const Trash = () => {
               ...mail,
               isChecked: false,
               trashed: false,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
             }
           )
         );
@@ -58,7 +53,7 @@ const Trash = () => {
       await Promise.all(updatedPromises);
       dispatch(
         showNotification({
-          message: "Restored! Moved to Inbox",
+          message: "Restored! ",
           variant: "success",
         })
       );

@@ -11,7 +11,7 @@ const mailSlice = createSlice({
   initialState: initialMailBoxState,
   reducers: {
     addToInbox: (state, action) => {
-      state.mails.push(action.payload);
+      state.mails.push(...action.payload);
     },
 
     setChecked: (state, action) => {
@@ -73,6 +73,17 @@ const mailSlice = createSlice({
         return mail;
       });
     },
+    moveFromStarred: (state, action) => {
+      state.mails = state.mails.map((mail) => {
+        if (mail.isChecked && mail.starred === true) {
+          return {
+            ...mail,
+            trashed: action.payload === "toTrash",
+          };
+        }
+        return mail;
+      });
+    },
     moveToTrash: (state, action) => {
       state.mails = state.mails.map((mail) => {
         if (mail.id === action.payload) {
@@ -123,5 +134,6 @@ export const {
   toggleStarred,
   deleteForever,
   emptyTrash,
+  moveFromStarred,
 } = mailSlice.actions;
 export default mailSlice.reducer;

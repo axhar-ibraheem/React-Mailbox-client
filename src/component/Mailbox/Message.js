@@ -4,37 +4,28 @@ import { Container, Button } from "react-bootstrap";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { moveToTrash, deleteForever } from "../../store/mailSlice";
 import { showNotification } from "../../store/authSlice";
-import axios from "axios";
+import useAxiosFetch from "../../hooks/useAxiosFetch.";
 const Message = () => {
   const { messageId } = useParams();
-
   const location = useLocation();
   const mails = useSelector((state) => state.mail.mails);
   const mailItem = mails.filter((mail) => mail.id === messageId);
   const history = useHistory();
   const email = useSelector((state) => state.auth.email);
   const senderMail = email.replace(/[.]/g, "");
-
+  const { fetchData: modifyMail } = useAxiosFetch();
   const [mail] = mailItem;
-  const url =
-    mail.sender === email
-      ? `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}/${mail.id}.json`
-      : `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`;
+  let url;
 
-  const moveToTrashHandler = async () => {
-    try {
-      const response = await axios.put(
-        url,
-        {
-          ...mail,
-          trashed: true,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
+  if (mails.length > 0) {
+    url =
+      mail.sender === email
+        ? `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}/${mail.id}.json`
+        : `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`;
+  }
+
+  const moveToTrashHandler = () => {
+    const onSuccess = (response) => {
       if (response.status === 200) {
         dispatch(moveToTrash(messageId));
         dispatch(
@@ -50,18 +41,23 @@ const Message = () => {
             : "/welcome/starred"
         );
       }
-    } catch (error) {
-      console.log(error.message);
-    }
+    };
+
+    modifyMail(
+      url,
+      "PUT",
+      {
+        ...mail,
+        trashed: true,
+      },
+      onSuccess
+    );
   };
 
-  const deleteForeverHandler = async () => {
+  const deleteForeverHandler = () => {
     dispatch(deleteForever({ id: messageId }));
     history.replace("/welcome/trash");
-    try {
-      const response = await axios.delete(url);
-
-      const data = response.data;
+    const onSuccess = (response) => {
       if (response.status === 200) {
         dispatch(
           showNotification({
@@ -70,10 +66,9 @@ const Message = () => {
           })
         );
       }
-      console.log(data);
-    } catch (error) {
-      console.log(error.message);
-    }
+    };
+
+    modifyMail(url, "DELETE", null, onSuccess);
   };
 
   const onBackHandler = () => {
@@ -133,18 +128,20 @@ const Message = () => {
           </Button>
         )}
       </div>
-      <div className="px-3">
-        <div className="pt-3">
-          <span className="fw-bold">From:</span>
-          <span>{mail.sender}</span>
-        </div>
-        <div className="pt-3">
-          <span className="fw-bold">To:</span>
-          <span>me {`(${mail.recipient})`} </span>
-        </div>
-        <p className="fw-bold pt-5">Subject: {mail.subject}</p>
-        <div className="mt-5 bg-light mx-lg-auto">
-          <p>{mail.emailContent} </p>
+      <div style={{ maxHeight: "80vh" }} className="overflow-auto">
+        <div className="px-3">
+          <div className="pt-3">
+            <span className="fw-bold">From: </span>
+            <span>{mail.sender}</span>
+          </div>
+          <div className="pt-3">
+            <span className="fw-bold">To: </span>
+            <span>{`(${mail.recipient})`} </span>
+          </div>
+          <p className="fw-bold pt-5">Subject: {mail.subject}</p>
+          <div className="mt-5 bg-light mx-lg-auto">
+            <p>{mail.emailContent}</p>
+          </div>
         </div>
       </div>
     </>

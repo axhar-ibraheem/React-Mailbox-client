@@ -3,22 +3,23 @@ import { Link, useLocation } from "react-router-dom";
 import { setChecked } from "../../store/mailSlice";
 import { useDispatch, useSelector } from "react-redux";
 import { setRead } from "../../store/mailSlice";
-import axios from "axios";
 import { useState } from "react";
 import { toggleStarred } from "../../store/mailSlice";
+import useAxiosFetch from "../../hooks/useAxiosFetch.";
 const MailListItems = (props) => {
   const { mail } = props;
   const email = useSelector((state) => state.auth.email);
   const senderMail = email.replace(/[.]/g, "");
   const location = useLocation();
   const dispatch = useDispatch();
-
+  const { fetchData: modifyMail } = useAxiosFetch();
   const onCheckHandler = () => {
     dispatch(setChecked({ id: mail.id, selector: "single" }));
   };
 
   const [isHovered, setIsHovered] = useState(false);
   const [starHovered, setStarHovered] = useState(false);
+
   const starMouseEnter = () => {
     setStarHovered(true);
   };
@@ -38,57 +39,36 @@ const MailListItems = (props) => {
       ? `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}/${mail.id}.json`
       : `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`;
 
-  const starClickHandler = async (e) => {
+  const starClickHandler = (e) => {
     e.stopPropagation();
     e.preventDefault();
-
     dispatch(toggleStarred({ id: mail.id }));
 
-    try {
-      const response = await axios.put(
-        url,
-        {
-          ...mail,
-          starred: !mail.starred,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-          },
-        }
-      );
-
-      if (response.status === 200) {
-      }
-    } catch (error) {
-      console.log(error.message);
-    }
+    modifyMail(url, "PUT", {
+      ...mail,
+      starred: !mail.starred,
+    });
   };
 
-  const onClickHandler = async () => {
+  const onClickHandler = () => {
     dispatch(setChecked({ id: null, selector: "none" }));
 
-    if (!mail.hasRead) {
-      try {
-        const response = await axios.put(
-          url,
-          {
-            ...mail,
-            hasRead: true,
-          },
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        if (response.status === 200) {
-          dispatch(setRead({ id: mail.id }));
-        }
-      } catch (error) {
-        console.log(error.message);
+    const onSuccess = (response) => {
+      if (response.status === 200) {
+        dispatch(setRead({ id: mail.id }));
       }
+    };
+
+    if (!mail.hasRead) {
+      modifyMail(
+        url,
+        "PUT",
+        {
+          ...mail,
+          hasRead: true,
+        },
+        onSuccess
+      );
     }
   };
 
@@ -122,7 +102,7 @@ const MailListItems = (props) => {
               />
             </Form>
 
-            <div className="">
+            <div>
               {mail.starred ? (
                 <i
                   className={`bi bi-star-fill text-warning px-1 ms-2 ${

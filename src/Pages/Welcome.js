@@ -22,11 +22,9 @@ const Welcome = () => {
   const mails = useSelector((state) => state.mail.mails);
   const email = useSelector((state) => state.auth.email);
   const { message, variant } = useSelector((state) => state.auth.notification);
-
   const filteredMails = mails.filter(
     (mail) => mail.recipient === email && mail.trashed === false
   );
-
   let unread = 0;
   filteredMails.forEach((mail) => {
     if (!mail.hasRead) {
@@ -144,7 +142,7 @@ const Welcome = () => {
           {message && (
             <div
               style={{ maxWidth: "15rem" }}
-              className="fixed-top ms-auto mt-2 me-3"
+              className="fixed-bottom ms-auto mb-2 me-3"
             >
               <Notification message={message} variant={variant} />
             </div>

@@ -43,20 +43,15 @@ const Sent = () => {
               ...mail,
               isChecked: false,
               trashed: true,
-            },
-            {
-              headers: {
-                "Content-Type": "application/json",
-              },
             }
           )
         );
       await Promise.all(updatedPromises);
 
+      dispatch(moveFromSentbox("toTrash"));
       dispatch(
         showNotification({ message: "Moved to trash!", variant: "success" })
       );
-      dispatch(moveFromSentbox("toTrash"));
     } catch (error) {
       console.log(error.message);
     }

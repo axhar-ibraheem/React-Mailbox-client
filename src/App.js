@@ -18,6 +18,7 @@ function App() {
   }
 
   const mails = useSelector((state) => state.mail.mails);
+  console.log(mails);
   const dispatch = useDispatch();
   const url1 =
     "https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails.json";
@@ -34,22 +35,22 @@ function App() {
         ? Object.entries(receivedMails)
             .filter(([key, mail]) => mail.recipient === recipientMail)
             .map(([key, mail]) => ({
+              ...mail,
               id: key,
               isChecked: false,
-              ...mail,
             }))
         : [];
 
       const sentMailItems = sentMails
         ? Object.entries(sentMails).map(([key, mail]) => ({
+            ...mail,
             id: key,
             isChecked: false,
-            ...mail,
           }))
         : [];
 
       const allMails = [...sentMailItems, ...inboxMails];
-
+      console.log(inboxMails);
       dispatch(addToInbox(allMails));
     };
 

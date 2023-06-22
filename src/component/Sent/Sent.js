@@ -66,7 +66,7 @@ const Sent = () => {
 
   return (
     <>
-      <div className="border-bottom d-flex align-items-center py-2 px-1">
+      <div className="border-bottom d-flex align-items-center py-2 px-1 mt-5 mt-lg-0">
         <Selector filteredMails={sentMails} />
         <div className="ms-auto mx-lg-auto">
           <Button
@@ -89,11 +89,7 @@ const Sent = () => {
       ) : sentMails.length === 0 ? (
         content
       ) : (
-        <ListGroup
-          style={{ maxHeight: "80vh" }}
-          variant="flush"
-          className="overflow-auto"
-        >
+        <ListGroup variant="flush">
           {sentMails.map((mail) => (
             <MailListItems mail={mail} key={mail.id} />
           ))}

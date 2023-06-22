@@ -79,7 +79,7 @@ const MailboxEditor = () => {
 
   return (
     <>
-      <Form onSubmit={onSubmitHandler} className="p-3">
+      <Form onSubmit={onSubmitHandler} className="p-3 mt-5 mt-lg-0">
         <InputGroup className="mb-3">
           <InputGroup.Text id="basic-addon1">To</InputGroup.Text>
           <Form.Control
@@ -98,7 +98,7 @@ const MailboxEditor = () => {
             toolbarClassName="py-3 border-bottom bg-light"
             wrapperClassName="card mt-3"
             editorClassName="card-body pt-0"
-            editorStyle={{ height: "16rem", maxHeight: "20rem" }}
+            editorStyle={{ height: "15rem", maxHeight: "30vh" }}
             editorState={editorState}
             onEditorStateChange={handleEditorStateChange}
           />

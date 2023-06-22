@@ -94,7 +94,7 @@ const Message = () => {
   }
   return (
     <>
-      <div className="border-bottom py-2 px-1 d-flex align-items-center">
+      <div className="border-bottom py-2 px-1 d-flex align-items-center mt-5 mt-lg-0">
         <p
           className="m-0"
           onClick={onBackHandler}

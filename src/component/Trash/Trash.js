@@ -112,7 +112,7 @@ const Trash = () => {
         />
       }
 
-      <div className="border-bottom d-flex align-items-center py-2 px-1">
+      <div className="border-bottom d-flex align-items-center py-2 px-1 mt-5 mt-lg-0">
         <Selector filteredMails={filteredMails} />
         <div className="ms-auto mx-lg-auto">
           <Button
@@ -145,7 +145,7 @@ const Trash = () => {
         <ListGroup
           variant="flush"
           className="overflow-auto"
-          style={{ maxHeight: "85vh" }}
+          // style={{ maxHeight: "85vh" }}
         >
           {filteredMails.map((mail) => (
             <MailListItems mail={mail} key={mail.id} />

@@ -140,7 +140,7 @@ const Welcome = () => {
             <Logout />
           </div>
         </Col>
-        <Col className="overflow-auto">
+        <Col style={{ maxHeight: "100vh" }} className="overflow-auto">
           {message && (
             <div
               style={{ maxWidth: "15rem" }}
@@ -149,14 +149,14 @@ const Welcome = () => {
               <Notification message={message} variant={variant} />
             </div>
           )}
-          <div className="d-lg-none border-bottom pb-2">
+          <div className="d-lg-none pb-2 fixed-top bg-light">
             <span className="px-2 py-2">
               <i
                 onClick={handleShow}
                 style={{ cursor: "pointer" }}
                 className="bi bi-justify fs-2"
               ></i>
-              <i className="bi fs-2 text-danger ps-3 bi-envelope-at-fill">
+              <i className="bi fs-2 text-danger ps-2 bi-envelope-at-fill">
                 {" "}
                 <span className="fs-6 fw-bold">Mail Box Client</span>
               </i>{" "}

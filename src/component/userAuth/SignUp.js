@@ -88,23 +88,23 @@ const SignUp = () => {
   return (
     <>
       <Container fluid>
-        <Row className="justify-content-center">
+        <Row className="justify-content-center min-vh-100 align-items-center border">
           {message && (
             <div className="fixed-top p-0">
               {" "}
               <Notification message={message} variant={variant} />{" "}
             </div>
           )}
-          <Col className="mt-5">
+          <Col className="">
             <div
               style={{ maxWidth: "25rem" }}
-              className="text-center mt-5 border bg-info bg-gradient mx-auto rounded-top py-4"
+              className="text-center border bg-info bg-gradient mx-auto rounded-top py-4"
             >
               <h4 className="fw-bold"> {signIn ? "Login" : "Sign Up"}</h4>
             </div>
             <Form
               onSubmit={onSubmitHandler}
-              className="p-4  shadow-lg mx-auto "
+              className="p-4 shadow-lg mx-auto "
               style={{ maxWidth: "25rem" }}
             >
               <FloatingLabel

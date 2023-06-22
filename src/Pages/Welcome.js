@@ -149,12 +149,12 @@ const Welcome = () => {
               <Notification message={message} variant={variant} />
             </div>
           )}
-          <div className="d-lg-none pb-2 fixed-top bg-light">
+          <div className="d-lg-none border py-1 fixed-top bg-light">
             <span className="px-2 py-2">
               <i
                 onClick={handleShow}
                 style={{ cursor: "pointer" }}
-                className="bi bi-justify fs-2"
+                className="bi ps-2 bi-justify fs-2 mt-1"
               ></i>
               <i className="bi fs-2 text-danger ps-2 bi-envelope-at-fill">
                 {" "}

@@ -69,9 +69,9 @@ function App() {
       const arr = [];
       for (const key in data) {
         const mailItem = {
+          ...data[key],
           id: key,
           isChecked: false,
-          ...data[key],
         };
         if (mailItem.recipient === recipientMail) {
           arr.push(mailItem);

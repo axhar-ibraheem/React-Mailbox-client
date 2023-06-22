@@ -7,7 +7,6 @@ import { moveFromInbox, setChecked } from "../../store/mailSlice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { showNotification } from "../../store/authSlice";
 import Selector from "./Selector";
-import useAxiosFetch from "../../hooks/useAxiosFetch.";
 const Inbox = () => {
   const mails = useSelector((state) => state.mail.mails);
   const dispatch = useDispatch();
@@ -65,13 +64,13 @@ const Inbox = () => {
         <Selector filteredMails={filteredMails} />
         <div className="ms-auto mx-lg-auto">
           <Button
-            variant="secondary"
+            variant="danger"
             className="px-2 border-0"
             disabled={!isDeleteEnabled}
             onClick={onDeleteHandler}
           >
             <p className="mx-auto p-0 m-0">
-              <i className="bi pe-2 bi-trash3"></i>
+              <i className="bi text-warning pe-2 bi-trash3"></i>
               <span className="">Delete</span>
             </p>
           </Button>

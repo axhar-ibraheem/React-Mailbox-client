@@ -98,7 +98,7 @@ const MailboxEditor = () => {
             toolbarClassName="py-3 border-bottom bg-light"
             wrapperClassName="card mt-3"
             editorClassName="card-body pt-0"
-            editorStyle={{ maxHeight: "20rem", height: "15rem" }}
+            editorStyle={{ height: "16rem", maxHeight: "20rem" }}
             editorState={editorState}
             onEditorStateChange={handleEditorStateChange}
           />
@@ -106,7 +106,7 @@ const MailboxEditor = () => {
         <div>
           <Button
             type="submit"
-            variant="secondary "
+            variant="danger"
             className="bg-gradient shadow rounded-0 px-4"
           >
             {isLoading ? "Sending" : "Send"}

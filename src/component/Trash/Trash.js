@@ -118,7 +118,7 @@ const Trash = () => {
           <Button
             disabled={filteredMails.length === 0}
             size="sm"
-            variant="secondary"
+            variant="danger"
             className="border-0 me-3"
             onClick={handleShow}
           >
@@ -127,7 +127,7 @@ const Trash = () => {
           <Button
             disabled={!isDeleteEnabled}
             size="sm"
-            variant="secondary"
+            variant="danger"
             className="border-0 "
             onClick={onRestoreHandler}
           >
@@ -145,7 +145,7 @@ const Trash = () => {
         <ListGroup
           variant="flush"
           className="overflow-auto"
-          style={{ maxHeight: "80vh" }}
+          style={{ maxHeight: "85vh" }}
         >
           {filteredMails.map((mail) => (
             <MailListItems mail={mail} key={mail.id} />

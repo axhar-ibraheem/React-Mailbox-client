@@ -71,12 +71,12 @@ const Sent = () => {
         <div className="ms-auto mx-lg-auto">
           <Button
             disabled={!isDeleteEnabled}
-            variant="secondary"
+            variant="danger"
             className="border-0 px-2"
             onClick={onDeleteHandler}
           >
             <p className="mx-auto p-0 m-0">
-              <i className="bi pe-2 bi-trash3"></i>
+              <i className="bi text-warning pe-2 bi-trash3"></i>
               <span className="">Delete</span>
             </p>
           </Button>

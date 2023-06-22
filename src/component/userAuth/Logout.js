@@ -14,7 +14,7 @@ const Logout = () => {
     <Button
       onClick={logoutHandler}
       variant="light"
-      className="border-0 rounded-0"
+      className="border-0 bg-gradient rounded-0"
     >
       Logout
     </Button>

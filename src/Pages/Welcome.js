@@ -52,7 +52,7 @@ const Welcome = () => {
           >
             <Offcanvas.Body className="d-flex flex-column p-lg-2">
               <div className="text-center">
-                <i className="bi bi-envelope-at-fill text-danger fs-2"></i>
+                <i className="bi bi-envelope-at-fill text-danger fs-1"></i>
                 <p className="ps-2 fs-4 fw-bold text-info">Mail Box Client</p>
               </div>
               <div className="text-start mt-5">
@@ -67,12 +67,12 @@ const Welcome = () => {
                     >
                       <div className="d-flex">
                         <span>
-                          <i className="fs-4 pe-2 bi bi-envelope-fill"></i>{" "}
+                          <i className="fs-4 pe-2 text-info bi bi-envelope-fill"></i>{" "}
                           Inbox
                         </span>
                         <span className="pt-3 position-relative mx-auto">
                           unread
-                          <span className=" p-0 position-absolute top-0 end-0 text-warning">
+                          <span className="p-0 position-absolute top-0 end-0 text-warning">
                             {unread}
                           </span>{" "}
                         </span>
@@ -87,7 +87,8 @@ const Welcome = () => {
                       className="py-2 w-100 rounded-0 text-start border-0 text-light"
                       onClick={onClickHandler}
                     >
-                      <i className=" fs-4 pe-2 bi bi-send-check-fill"></i> Sent
+                      <i className="fs-4 pe-2 text-info bi bi-send-check-fill"></i>{" "}
+                      Sent
                     </ToggleButton>
                   </NavLink>
                   <NavLink
@@ -101,7 +102,7 @@ const Welcome = () => {
                       className="py-2 w-100 border-0 rounded-0 text-start text-light"
                       onClick={onClickHandler}
                     >
-                      <i className="fs-4 pe-2 bi bi-envelope-plus-fill"></i>{" "}
+                      <i className="fs-4 pe-2 text-info bi bi-pencil-fill"></i>{" "}
                       Compose
                     </ToggleButton>
                   </NavLink>
@@ -113,7 +114,7 @@ const Welcome = () => {
                       className="rounded-0 w-100 text-start py-2 border-0 text-light"
                       onClick={onClickHandler}
                     >
-                      <i className="fs-4 pe-2 bi bi-trash3"></i> Trash
+                      <i className="fs-4 pe-2 text-info bi bi-trash3"></i> Trash
                     </ToggleButton>
                   </NavLink>
                   <NavLink to="/welcome/starred" activeClassName={"bg-success"}>
@@ -124,12 +125,13 @@ const Welcome = () => {
                       className="rounded-0 w-100 text-start py-2 border-0 text-light"
                       onClick={onClickHandler}
                     >
-                      <i className="bi fs-4 pe-2 bi-star-fill"></i> Starred
+                      <i className="bi fs-4 pe-2 text-info bi-star-fill"></i>{" "}
+                      Starred
                     </ToggleButton>
                   </NavLink>
                 </ButtonGroup>
               </div>
-              <div className="mt-auto d-lg-none  ms-3">
+              <div className="mt-auto d-lg-none ms-3">
                 <Logout />
               </div>
             </Offcanvas.Body>
@@ -138,7 +140,7 @@ const Welcome = () => {
             <Logout />
           </div>
         </Col>
-        <Col>
+        <Col className="overflow-auto">
           {message && (
             <div
               style={{ maxWidth: "15rem" }}
@@ -148,14 +150,16 @@ const Welcome = () => {
             </div>
           )}
           <div className="d-lg-none border-bottom pb-2">
-            <span className="px-3 py-2">
+            <span className="px-2 py-2">
               <i
                 onClick={handleShow}
                 style={{ cursor: "pointer" }}
                 className="bi bi-justify fs-2"
               ></i>
-              <i className="bi fs-2 text-danger ps-3 bi-envelope-at-fill"></i>{" "}
-              <span>Mail Box Client</span>
+              <i className="bi fs-2 text-danger ps-3 bi-envelope-at-fill">
+                {" "}
+                <span className="fs-6 fw-bold">Mail Box Client</span>
+              </i>{" "}
             </span>
           </div>
 

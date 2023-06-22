@@ -7,7 +7,7 @@ const useAxiosFetch = () => {
   const dispatch = useDispatch();
 
   const fetchData = useCallback(
-    async (urls, method, data, onSuccess) => {
+    async (urls, method, data = null, onSuccess = null) => {
       if (Array.isArray(urls)) {
         dispatch(setMailsLoading(true));
       }
@@ -29,13 +29,15 @@ const useAxiosFetch = () => {
           const response = await axios({
             method: method,
             url: urls,
-            data: data ? data : null,
+            data: data,
           });
 
           responses = response;
         }
 
-        onSuccess(responses);
+        if (onSuccess) {
+          onSuccess(responses);
+        }
       } catch (error) {
         console.log(error.message);
       } finally {

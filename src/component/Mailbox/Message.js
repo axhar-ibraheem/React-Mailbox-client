@@ -94,7 +94,7 @@ const Message = () => {
   }
   return (
     <>
-      <div className="border-bottom py-2 px-2 d-flex align-items-center">
+      <div className="border-bottom py-2 px-1 d-flex align-items-center">
         <p
           className="m-0"
           onClick={onBackHandler}
@@ -106,23 +106,23 @@ const Message = () => {
 
         {location.pathname !== `/welcome/trash/${messageId}` ? (
           <Button
-            variant="secondary"
-            className="px-2 mb-1 border-0 ms-auto mx-lg-auto"
+            variant="danger"
+            className="px-2 border-0 ms-auto mx-lg-auto"
             onClick={moveToTrashHandler}
           >
             <p className="mx-auto p-0 m-0">
-              <i className="bi pe-2 bi-trash3"></i>
+              <i className="bi text-warning pe-2 bi-trash3"></i>
               <span className="">Delete</span>
             </p>
           </Button>
         ) : (
           <Button
-            variant="secondary"
+            variant="danger"
             className="px-2 border-0 ms-auto mx-lg-auto"
             onClick={deleteForeverHandler}
           >
             <p className="mx-auto p-0 m-0">
-              <i className="bi pe-2 bi-trash3"></i>
+              <i className="bi text-warning pe-2 bi-trash3"></i>
               <span className="">Delete Forever</span>
             </p>
           </Button>

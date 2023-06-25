@@ -15,6 +15,7 @@ This is a Mailbox Client App built using React, Redux, and Firebase backend. It 
 
 * React
 * Redux
+* React-bootstrap
 * Firebase
 
 ## Usage

@@ -7,7 +7,7 @@ This is a Mailbox Client App built using React, Redux, and Firebase backend. It 
 * Inbox: Users can view received emails in their inbox.
 * Sent: Users can view sent emails.
 * Compose: Users can compose and send new emails.
-* Delete: Users can delete emails from their mailbox and sent.
+* Delete: Users can delete emails from their mailbox.
 * Star: Users can star important emails to mark them.
 * Responsive Design: The app is optimized for various screen sizes.
 

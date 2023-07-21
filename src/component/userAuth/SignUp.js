@@ -88,14 +88,14 @@ const SignUp = () => {
   return (
     <>
       <Container fluid>
-        <Row className="justify-content-center min-vh-100 align-items-center border">
+        <Row className="justify-content-center min-vh-100 align-items-center">
           {message && (
             <div className="fixed-top p-0">
               {" "}
               <Notification message={message} variant={variant} />{" "}
             </div>
           )}
-          <Col className="">
+          <Col>
             <div
               style={{ maxWidth: "25rem" }}
               className="text-center border bg-info bg-gradient mx-auto rounded-top py-4"
@@ -151,14 +151,14 @@ const SignUp = () => {
                 {signIn ? (
                   <Button
                     type="submit"
-                    className="w-100 mt-2 bg-primary bg-gradient rounded-0"
+                    className="w-100 mt-2 bg-info bg-gradient rounded-0 border-0 text-dark fw-bold"
                   >
                     {isLoading ? <LoadingSpinner /> : "Login"}
                   </Button>
                 ) : (
                   <Button
                     type="submit"
-                    className="w-100 mt-2 bg-primary bg-gradient rounded-0"
+                    className="w-100 mt-2 bg-info bg-gradient rounded-0 border-0 text-dark fw-bold"
                   >
                     {isLoading ? <LoadingSpinner /> : "Sign Up"}
                   </Button>

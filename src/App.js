@@ -11,14 +11,8 @@ function App() {
   const recipientMail = useSelector((state) => state.auth.email);
 
   const { fetchData: fetchMails } = useAxiosFetch();
-
-  let email;
-  if (auth) {
-    email = recipientMail.replace(/[.]/g, "");
-  }
-
+  const email = auth ? recipientMail.replace(/[.]/g, "") : undefined;
   const mails = useSelector((state) => state.mail.mails);
-  console.log(mails);
   const dispatch = useDispatch();
   const url1 =
     "https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails.json";
@@ -50,7 +44,6 @@ function App() {
         : [];
 
       const allMails = [...sentMailItems, ...inboxMails];
-      console.log(inboxMails);
       dispatch(addToInbox(allMails));
     };
 
@@ -93,7 +86,7 @@ function App() {
     return () => {
       clearInterval(interval);
     };
-  }, [fetchMails, recipientMail, mails]);
+  }, [fetchMails, recipientMail, mails, dispatch]);
 
   return (
     <Switch>

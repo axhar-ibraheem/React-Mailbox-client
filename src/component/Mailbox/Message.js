@@ -9,12 +9,11 @@ const Message = () => {
   const { messageId } = useParams();
   const location = useLocation();
   const mails = useSelector((state) => state.mail.mails);
-  const mailItem = mails.filter((mail) => mail.id === messageId);
+  const mail = mails.find((mail) => mail.id === messageId);
   const history = useHistory();
   const email = useSelector((state) => state.auth.email);
   const senderMail = email.replace(/[.]/g, "");
   const { fetchData: modifyMail } = useAxiosFetch();
-  const [mail] = mailItem;
   let url;
 
   if (mails.length > 0) {

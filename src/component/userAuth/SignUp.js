@@ -103,7 +103,7 @@ const SignUp = () => {
           </div>
             <div
               style={{ maxWidth: "25rem" }}
-              className="text-center bg-danger bg-gradient mx-auto rounded-top"
+              className="text-center bg-danger bg-gradient mx-auto rounded-top py-1"
             >
                <i className="bi bi-envelope-at-fill fs-1 text-light"></i> 
             </div>

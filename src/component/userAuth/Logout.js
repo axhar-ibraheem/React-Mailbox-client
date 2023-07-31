@@ -17,6 +17,7 @@ const Logout = () => {
       className="border-0 bg-gradient rounded-0"
     >
       Logout
+    
     </Button>
   );
 };

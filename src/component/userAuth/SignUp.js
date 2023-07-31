@@ -88,7 +88,8 @@ const SignUp = () => {
   return (
     <>
       <Container fluid>
-        <Row className="justify-content-center min-vh-100 align-items-center">
+        <Row className="justify-content-center min-vh-100 align-items-center ">
+          
           {message && (
             <div className="fixed-top p-0">
               {" "}
@@ -96,11 +97,15 @@ const SignUp = () => {
             </div>
           )}
           <Col>
+          <div className="text-center pb-4">
+            <h3>Welcome to <span className="text-danger fst-italic">Mail Box Client </span></h3>
+            <p>Please Sign Up/Login to continue.</p>
+          </div>
             <div
               style={{ maxWidth: "25rem" }}
-              className="text-center border bg-info bg-gradient mx-auto rounded-top py-4"
+              className="text-center border bg-danger bg-gradient mx-auto rounded-top py-2"
             >
-              <h4 className="fw-bold"> {signIn ? "Login" : "Sign Up"}</h4>
+              <h4 className="fw-bold"><i className="bi bi-envelope-at-fill fs-1 text-light"></i></h4>
             </div>
             <Form
               onSubmit={onSubmitHandler}
@@ -151,14 +156,14 @@ const SignUp = () => {
                 {signIn ? (
                   <Button
                     type="submit"
-                    className="w-100 mt-2 bg-info bg-gradient rounded-0 border-0 text-dark fw-bold"
+                    className="w-100 mt-2 bg-danger bg-gradient rounded-0 border-0 text-light fw-bold"
                   >
                     {isLoading ? <LoadingSpinner /> : "Login"}
                   </Button>
                 ) : (
                   <Button
                     type="submit"
-                    className="w-100 mt-2 bg-info bg-gradient rounded-0 border-0 text-dark fw-bold"
+                    className="w-100 mt-2 bg-danger bg-gradient rounded-0 border-0 text-light fw-bold"
                   >
                     {isLoading ? <LoadingSpinner /> : "Sign Up"}
                   </Button>

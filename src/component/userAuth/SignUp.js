@@ -88,7 +88,7 @@ const SignUp = () => {
   return (
     <>
       <Container fluid>
-        <Row className="justify-content-center min-vh-100 align-items-center ">
+        <Row className="justify-content-center min-vh-100 align-items-center">
           
           {message && (
             <div className="fixed-top p-0">
@@ -103,9 +103,9 @@ const SignUp = () => {
           </div>
             <div
               style={{ maxWidth: "25rem" }}
-              className="text-center border bg-danger bg-gradient mx-auto rounded-top py-2"
+              className="text-center bg-danger bg-gradient mx-auto rounded-top"
             >
-              <h4 className="fw-bold"><i className="bi bi-envelope-at-fill fs-1 text-light"></i></h4>
+               <i className="bi bi-envelope-at-fill fs-1 text-light"></i> 
             </div>
             <Form
               onSubmit={onSubmitHandler}

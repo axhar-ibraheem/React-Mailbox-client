@@ -7,11 +7,11 @@ import { addToInbox, clearInbox } from "./store/mailSlice";
 import useAxiosFetch from "./hooks/useAxiosFetch.";
 
 function App() {
-  const auth = useSelector((state) => state.auth.isAuthenticated);
+  const isAuthenticated = useSelector((state) => state.auth.isAuthenticated);
   const recipientMail = useSelector((state) => state.auth.email);
 
   const { fetchData: fetchMails } = useAxiosFetch();
-  const email = auth ? recipientMail.replace(/[.]/g, "") : undefined;
+  const email = isAuthenticated ? recipientMail.replace(/[.]/g, "") : undefined;
   const mails = useSelector((state) => state.mail.mails);
   const dispatch = useDispatch();
   const url1 =
@@ -54,6 +54,7 @@ function App() {
     return () => {
       dispatch(clearInbox());
     };
+    // eslint-disable-next-line
   }, [recipientMail, dispatch, fetchMails]);
 
   useEffect(() => {
@@ -96,15 +97,15 @@ function App() {
       <Route path="/auth">
         <SignUp />
       </Route>
-      {auth && (
+      {isAuthenticated && (
         <Route path="/welcome">
           <Welcome />
         </Route>
       )}
-      {!auth && (
-        <Route path="*">
-          <Redirect to="/auth" />
-        </Route>
+      {!isAuthenticated ? (
+        <Redirect from="*" to="/auth" />
+      ) : (
+        <Redirect from="*" to="/welcome/inbox" />
       )}
     </Switch>
   );

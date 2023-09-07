@@ -12,7 +12,6 @@ import { useDispatch, useSelector } from "react-redux";
 import Notification from "../UI/Notification";
 import { showNotification } from "../../store/authSlice";
 import { setIsLoading } from "../../store/authSlice";
-import LoadingSpinner from "../UI/LoadingSpinner";
 import { login } from "../../store/authSlice";
 import { useHistory } from "react-router-dom";
 const SignUp = () => {
@@ -78,7 +77,8 @@ const SignUp = () => {
         }
       }
     } catch (error) {
-      const errorMessage = error.response.data.error.message;
+      const { data } = error.response;
+      const { message: errorMessage } = data.error;
       dispatch(showNotification({ message: errorMessage, variant: "danger" }));
     } finally {
       dispatch(setIsLoading(false));
@@ -156,16 +156,16 @@ const SignUp = () => {
                 {signIn ? (
                   <Button
                     type="submit"
-                    className="w-100 mt-2 bg-danger bg-gradient rounded-0 border-0 text-light fw-bold"
+                    className={`w-100 mt-2 bg-danger ${isLoading ? "bg-gradient" : ""}  rounded-0 border-0 text-light fw-bold`}
                   >
-                    {isLoading ? <LoadingSpinner /> : "Login"}
+                    {isLoading ?  "Logging in..." : "Login"}
                   </Button>
                 ) : (
                   <Button
                     type="submit"
-                    className="w-100 mt-2 bg-danger bg-gradient rounded-0 border-0 text-light fw-bold"
+                    className={`w-100 mt-2 bg-danger ${isLoading ? "bg-gradient" : " "}  rounded-0 border-0 text-light fw-bold`}
                   >
-                    {isLoading ? <LoadingSpinner /> : "Sign Up"}
+                    {isLoading ?  "Signing up..." : "Sign Up"}
                   </Button>
                 )}
               </div>

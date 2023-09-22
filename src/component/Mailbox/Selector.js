@@ -6,28 +6,8 @@ const Selector = (props) => {
   const dispatch = useDispatch();
   const checked = props.filteredMails.some((mail) => mail.isChecked === false);
 
-  const selectAllHandler = () => {
-    dispatch(setChecked({ id: null, selector: "allMark" }));
-  };
-
-  const noneSelectHandler = () => {
-    dispatch(setChecked({ id: null, selector: "none" }));
-  };
-  const readSelectHandler = () => {
-    dispatch(setChecked({ id: null, selector: "read" }));
-  };
-  const unreadSelectHandler = () => {
-    dispatch(setChecked({ id: null, selector: "unread" }));
-  };
-
-  const onSelectAllMailsHandler = () => {
-    dispatch(setChecked({ id: null, selector: "all" }));
-  };
-  const starredSelectHandler = () => {
-    dispatch(setChecked({ id: null, selector: "starred" }));
-  };
-  const unStarredSelectHandler = () => {
-    dispatch(setChecked({ id: null, selector: "unstarred" }));
+  const selectHandler = (select) => {
+    dispatch(setChecked({ id: null, selector: select }));
   };
 
   return (
@@ -36,7 +16,7 @@ const Selector = (props) => {
       title={
         <Form>
           <Form.Check
-            onChange={onSelectAllMailsHandler}
+            onChange={() => selectHandler("all")}
             checked={!checked && props.filteredMails.length > 0}
           />
         </Form>
@@ -44,24 +24,44 @@ const Selector = (props) => {
       className="p-0"
       disabled={props.filteredMails.length === 0}
     >
-      <Dropdown.Item as={"button"} onClick={selectAllHandler} eventKey="1">
+      <Dropdown.Item
+        as={"button"}
+        onClick={() => selectHandler("allMark")}
+        eventKey="1"
+      >
         All
       </Dropdown.Item>
-      <Dropdown.Item onClick={noneSelectHandler} as={"button"} eventKey="2">
+      <Dropdown.Item
+        onClick={() => selectHandler("none")}
+        as={"button"}
+        eventKey="2"
+      >
         None
       </Dropdown.Item>
-      <Dropdown.Item as={"button"} onClick={readSelectHandler} eventKey="3">
+      <Dropdown.Item
+        as={"button"}
+        onClick={() => selectHandler("read")}
+        eventKey="3"
+      >
         Read
       </Dropdown.Item>
-      <Dropdown.Item as={"button"} onClick={unreadSelectHandler} eventKey="4">
+      <Dropdown.Item
+        as={"button"}
+        onClick={() => selectHandler("unread")}
+        eventKey="4"
+      >
         Unread
       </Dropdown.Item>
-      <Dropdown.Item as={"button"} onClick={starredSelectHandler} eventKey="5">
+      <Dropdown.Item
+        as={"button"}
+        onClick={() => selectHandler("starred")}
+        eventKey="5"
+      >
         Starred
       </Dropdown.Item>
       <Dropdown.Item
         as={"button"}
-        onClick={unStarredSelectHandler}
+        onClick={() => selectHandler("unstarred")}
         eventKey="6"
       >
         Unstarred

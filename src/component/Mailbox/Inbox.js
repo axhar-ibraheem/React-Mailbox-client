@@ -1,12 +1,13 @@
-import { useEffect } from "react";
 import { ListGroup, Button } from "react-bootstrap";
 import { useSelector, useDispatch } from "react-redux";
 import axios from "axios";
 import MailListItems from "./MailListItems";
-import { moveFromInbox, setChecked } from "../../store/mailSlice";
+import { moveFromInbox} from "../../store/mailSlice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { showNotification } from "../../store/authSlice";
 import Selector from "./Selector";
+import useUnselect from "../../hooks/useUnselect";
+import EmptyMessage from "../UI/EmptyMessage";
 const Inbox = () => {
   const mails = useSelector((state) => state.mail.mails);
   const dispatch = useDispatch();
@@ -43,20 +44,7 @@ const Inbox = () => {
       console.log(error.message);
     }
   };
-
-  const content = (
-    <div className="text-center mt-5">
-      {" "}
-      <h5>Your inbox is Empty!</h5>
-    </div>
-  );
-
-  useEffect(() => {
-    return () => {
-      dispatch(setChecked({ id: null, selector: "none" }));
-      dispatch(showNotification({ message: null, variant: null }));
-    };
-  }, [dispatch]);
+  useUnselect(dispatch)
 
   return (
     <div className="">
@@ -81,7 +69,7 @@ const Inbox = () => {
           <LoadingSpinner />
         </div>
       ) : filteredMails.length === 0 ? (
-        content
+        <EmptyMessage message = "Your inbox is empty!"/>
       ) : (
         <ListGroup variant="flush" className="overflow-auto">
           {filteredMails.map((mail) => (

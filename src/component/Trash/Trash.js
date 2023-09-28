@@ -6,18 +6,18 @@ import ConfirmDelete from "./ConfirmDelete";
 import {
   moveFromInbox,
   moveFromSentbox,
-  setChecked,
 } from "../../store/mailSlice";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import axios from "axios";
 import { showNotification } from "../../store/authSlice";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import { emptyTrash } from "../../store/mailSlice";
-
+import useUnselect from "../../hooks/useUnselect";
+import EmptyMessage from "../UI/EmptyMessage";
 const Trash = () => {
   const mails = useSelector((state) => state.mail.mails);
   const email = useSelector((state) => state.auth.email);
-
+  
   const [show, setShow] = useState(false);
   const handleClose = () => setShow(false);
   const handleShow = () => setShow(true);
@@ -26,7 +26,7 @@ const Trash = () => {
   const dispatch = useDispatch();
   const isLoading = useSelector((state) => state.mail.isLoading);
 
-  const filteredMails = mails.filter((mail) => mail.trashed === true);
+  const filteredMails = mails.filter((mail) => mail.trashed);
 
   const isDeleteEnabled = filteredMails.some((item) => item.isChecked);
 
@@ -84,24 +84,11 @@ const Trash = () => {
         })
       );
     } catch (error) {
-      console.log(error.message);
+      const {data} = error.response;
+      console.log(data.error.message);
     }
   };
-
-  const content = (
-    <div className="text-center mt-5">
-      {" "}
-      <h5>No conversations in Trash!</h5>
-    </div>
-  );
-
-  useEffect(() => {
-    return () => {
-      dispatch(setChecked({ id: null, selector: "none" }));
-      dispatch(showNotification({ message: null, variant: null }));
-    };
-  }, [dispatch]);
-
+useUnselect(dispatch)
   return (
     <>
       {
@@ -140,7 +127,7 @@ const Trash = () => {
           <LoadingSpinner />
         </div>
       ) : filteredMails.length === 0 ? (
-        content
+        <EmptyMessage message = "No conversations in Trash!"/>
       ) : (
         <ListGroup
           variant="flush"

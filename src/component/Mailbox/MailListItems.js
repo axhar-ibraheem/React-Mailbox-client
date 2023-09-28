@@ -39,9 +39,9 @@ const MailListItems = (props) => {
       ? `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}/${mail.id}.json`
       : `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails/${mail.id}.json`;
 
-  const starClickHandler = (e) => {
-    e.stopPropagation();
-    e.preventDefault();
+  const starClickHandler = (event) => {
+    event.stopPropagation();
+    event.preventDefault();
     dispatch(toggleStarred({ id: mail.id }));
 
     modifyMail(url, "PUT", {
@@ -143,7 +143,6 @@ const MailListItems = (props) => {
             )}...`}</span>
           </div>
         </Col>
-        <Col></Col>
       </Row>
     </ListGroup.Item>
   );

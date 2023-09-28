@@ -3,28 +3,19 @@ import { Button, ListGroup } from "react-bootstrap";
 import LoadingSpinner from "../UI/LoadingSpinner";
 import MailListItems from "../Mailbox/MailListItems";
 import { useDispatch, useSelector } from "react-redux";
-import { setChecked, moveFromStarred } from "../../store/mailSlice";
-import { useEffect } from "react";
+import {  moveFromStarred } from "../../store/mailSlice";
 import { showNotification } from "../../store/authSlice";
 import axios from "axios";
+import useUnselect from "../../hooks/useUnselect";
+import EmptyMessage from "../UI/EmptyMessage";
 const Starred = () => {
   const mails = useSelector((state) => state.mail.mails);
   const email = useSelector((state) => state.auth.email);
   const isLoading = useSelector((state) => state.mail.isLoading);
   const dispatch = useDispatch();
   const senderMail = email.replace(/[.]/g, "");
-
-  const starredMails = mails.filter(
-    (mail) => mail.starred && mail.trashed === false
-  );
-
+  const starredMails = mails.filter((mail) => mail.starred && !mail.trashed);
   const isDeleteEnabled = starredMails.some((mail) => mail.isChecked);
-  const content = (
-    <div className="text-center mt-5">
-      {" "}
-      <h5>No Starred messages!</h5>
-    </div>
-  );
   const url1 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/emails`;
   const url2 = `https://react-mailbox-client-4f470-default-rtdb.firebaseio.com/sent-emails/${senderMail}`;
 
@@ -45,7 +36,6 @@ const Starred = () => {
           )
         );
       await Promise.all(updatedPromises);
-
       dispatch(moveFromStarred("toTrash"));
       dispatch(
         showNotification({
@@ -54,16 +44,11 @@ const Starred = () => {
         })
       );
     } catch (error) {
-      console.log(error.message);
+      const { data } = error.response;
+      console.log(data.error.message);
     }
   };
-
-  useEffect(() => {
-    return () => {
-      dispatch(setChecked({ id: null, selector: "none" }));
-      dispatch(showNotification({ message: null, variant: null }));
-    };
-  }, [dispatch]);
+  useUnselect(dispatch)
   return (
     <>
       <div className="border-bottom d-flex align-items-center py-2 px-1 mt-5 mt-lg-0">
@@ -87,7 +72,7 @@ const Starred = () => {
           <LoadingSpinner />
         </div>
       ) : starredMails.length === 0 ? (
-        content
+        <EmptyMessage message= "No starred messages!" />
       ) : (
         <ListGroup variant="flush">
           {starredMails.map((mail) => (

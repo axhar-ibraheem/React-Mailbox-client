@@ -7,14 +7,13 @@ const useAxiosFetch = () => {
   const dispatch = useDispatch();
 
   const fetchData = useCallback(
-    async (urls, method, data = null, onSuccess = null) => {
+    async (urls, method, data = null, onSuccess) => {
       if (Array.isArray(urls)) {
         dispatch(setMailsLoading(true));
       }
 
       try {
         let responses;
-
         if (Array.isArray(urls)) {
           const requests = urls.map((url) =>
             axios({
@@ -31,7 +30,6 @@ const useAxiosFetch = () => {
             url: urls,
             data: data,
           });
-
           responses = response;
         }
 
@@ -39,7 +37,8 @@ const useAxiosFetch = () => {
           onSuccess(responses);
         }
       } catch (error) {
-        console.log(error.message);
+        const { data } = error.response;
+        console.log(data.error.message);
       } finally {
         if (Array.isArray(urls)) {
           dispatch(setMailsLoading(false));

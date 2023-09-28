@@ -4,34 +4,21 @@ import LoadingSpinner from "../UI/LoadingSpinner";
 import MailListItems from "../Mailbox/MailListItems";
 import { useDispatch, useSelector } from "react-redux";
 import { Link } from "react-router-dom";
-import { moveFromSentbox, setChecked } from "../../store/mailSlice";
-import { useEffect } from "react";
+import { moveFromSentbox } from "../../store/mailSlice";
 import { showNotification } from "../../store/authSlice";
-
 import axios from "axios";
+import useUnselect from "../../hooks/useUnselect";
+import EmptyMessage from "../UI/EmptyMessage";
 const Sent = () => {
   const mails = useSelector((state) => state.mail.mails);
   const email = useSelector((state) => state.auth.email);
   const senderMail = email.replace(/[.]/g, "");
-
   const sentMails = mails.filter(
-    (mail) => mail.trashed === false && mail.sender === email
+    (mail) => !mail.trashed && mail.sender === email
   );
   const isLoading = useSelector((state) => state.mail.isLoading);
   const dispatch = useDispatch();
   const isDeleteEnabled = sentMails.some((mail) => mail.isChecked);
-
-  const content = (
-    <div className="text-center mt-5">
-      {" "}
-      <h5>No sent messages!</h5>
-      <Link to="/welcome/mailboxeditor">
-        <span>Send</span>
-      </Link>{" "}
-      one now!
-    </div>
-  );
-
   const onDeleteHandler = async () => {
     try {
       const updatedPromises = sentMails
@@ -53,17 +40,11 @@ const Sent = () => {
         showNotification({ message: "Moved to trash!", variant: "success" })
       );
     } catch (error) {
-      console.log(error.message);
+      const { data } = error.response;
+      console.log(data.error.message);
     }
   };
-
-  useEffect(() => {
-    return () => {
-      dispatch(setChecked({ id: null, selector: "none" }));
-      dispatch(showNotification({ message: null, variant: null }));
-    };
-  }, [dispatch]);
-
+  useUnselect(dispatch);
   return (
     <>
       <div className="border-bottom d-flex align-items-center py-2 px-1 mt-5 mt-lg-0">
@@ -87,7 +68,19 @@ const Sent = () => {
           <LoadingSpinner />
         </div>
       ) : sentMails.length === 0 ? (
-        content
+        <>
+          <EmptyMessage
+            message="No sent messages!"
+            link={
+              <>
+                <Link to="/welcome/mailboxeditor">
+                  <span>Send</span>
+                </Link> {" "}
+                one now!
+              </>
+            }
+          />{" "}
+        </>
       ) : (
         <ListGroup variant="flush">
           {sentMails.map((mail) => (
